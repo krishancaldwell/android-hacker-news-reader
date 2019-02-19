@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.adapters.ArticleRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.News;
@@ -58,16 +59,22 @@ public class ArticleListFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
         mRealm = Realm.getDefaultInstance();
+
+        // Remove stale data from Realm
+        long oneDayAgo = 86400000L;
+        long now = System.currentTimeMillis();
+        long yesterday = now - oneDayAgo;
+        RealmResults<FeedItem> staleItems = mRealm.where(FeedItem.class)
+                .lessThan("time", yesterday)
+                .findAll();
+        if (staleItems.size() > 0) {
+            mRealm.executeTransaction(realm -> staleItems.deleteAllFromRealm());
+        }
 
         getArticles();
 
@@ -170,6 +177,7 @@ public class ArticleListFragment extends Fragment {
                     }
                 }
             });
+
             refreshArticles();
 
         }, () -> {

@@ -11,11 +11,10 @@ import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
-import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link FeedItem} and makes a call to the
  * specified {@link OnArticleSelectedListener}.
  * TODO: Replace the implementation with code for your data type.
  */
