@@ -31,7 +31,7 @@ public class DummyContent {
         // Add some sample items.
         for (int i = 0; i < COUNT; i++) {
             addItem(new DummyItem(i, false, DummyItem.Types.story.name(),
-                    "K. Caldwell", String.valueOf(System.currentTimeMillis()),
+                    "K. Caldwell", System.currentTimeMillis(),
                     "This is a story", false, null,
                     null, "https://kcaldwell.me", i*i,
                     "Best Story Ever", 2*i));
@@ -52,7 +52,7 @@ public class DummyContent {
         public final boolean deleted;
         public final String type;
         public final String by;
-        public final String time; // (in unix)
+        public final long time; // (in unix)
         public final String content; // text
         public final boolean dead;
         public final Integer parent;
@@ -62,7 +62,7 @@ public class DummyContent {
         public final String title;
         public final int descendentsCount; // descendents
 
-        public DummyItem(int id, boolean deleted, String type, String by, String time, String content, boolean dead, Integer parent, Integer[] children, String url, int score, String title, int descendentsCount) {
+        public DummyItem(int id, boolean deleted, String type, String by, long time, String content, boolean dead, Integer parent, Integer[] children, String url, int score, String title, int descendentsCount) {
             this.id = id;
             this.deleted = deleted;
             this.type = type;

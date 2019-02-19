@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import me.kcaldwell.hackernewsreader.ArticleListFragment.OnArticleSelectedListener;
-import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
+import com.github.kevinsawicki.timeago.TimeAgo;
 
 import java.util.List;
+
+import me.kcaldwell.hackernewsreader.ArticleListFragment.OnArticleSelectedListener;
+import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -41,7 +43,12 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
         holder.mTitleTextView.setText(article.title);
         holder.mPreviewView.setText(article.content);
         holder.mAuthorTextView.setText(article.by);
-        holder.mTimePostedTextView.setText(article.time);
+
+        // Calculate time in human readable form
+        TimeAgo timeUtil = new TimeAgo();
+        long currentTime = System.currentTimeMillis();
+        String time = timeUtil.time(currentTime - article.time, false);
+        holder.mTimePostedTextView.setText(time);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
