@@ -6,10 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+
+import me.kcaldwell.hackernewsreader.api.API;
+import me.kcaldwell.hackernewsreader.api.News;
 import me.kcaldwell.hackernewsreader.dummy.DummyContent;
 import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 
@@ -20,6 +26,8 @@ import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
  * interface.
  */
 public class ArticleListFragment extends Fragment {
+
+    private static final String TAG = ArticleListFragment.class.getSimpleName();
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -56,12 +64,12 @@ public class ArticleListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_article_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+        if (rootView instanceof RecyclerView) {
+            Context context = rootView.getContext();
+            RecyclerView recyclerView = (RecyclerView) rootView;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -69,7 +77,10 @@ public class ArticleListFragment extends Fragment {
             }
             recyclerView.setAdapter(new ArticleRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
-        return view;
+
+        getArticles();
+
+        return rootView;
     }
 
 
@@ -88,6 +99,23 @@ public class ArticleListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    // Get articles
+    private void getArticles() {
+        News.get(getActivity(), new API.ResponseCallback() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.i(TAG, response.toString());
+            }
+        }, new API.ErrorCallback() {
+            @Override
+            public void onError() {
+                Log.e(TAG, "An error occurred");
+
+                Toast.makeText(getActivity(), "There was an error updating the stories", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /**
