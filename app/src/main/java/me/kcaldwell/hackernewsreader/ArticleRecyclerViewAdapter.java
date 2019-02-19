@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import me.kcaldwell.hackernewsreader.ArticleListFragment.OnArticleSelectedListener;
@@ -18,11 +19,11 @@ import java.util.List;
  */
 public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<DummyItem> mArticles;
     private final ArticleListFragment.OnArticleSelectedListener mListener;
 
-    public ArticleRecyclerViewAdapter(List<DummyItem> items, ArticleListFragment.OnArticleSelectedListener listener) {
-        mValues = items;
+    public ArticleRecyclerViewAdapter(List<DummyItem> articles, ArticleListFragment.OnArticleSelectedListener listener) {
+        mArticles = articles;
         mListener = listener;
     }
 
@@ -35,9 +36,12 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(String.valueOf(mValues.get(position).id));
-        holder.mContentView.setText(mValues.get(position).content);
+        DummyItem article = mArticles.get(position);
+        holder.mItem = article;
+        holder.mTitleTextView.setText(article.title);
+        holder.mPreviewView.setText(article.content);
+        holder.mAuthorTextView.setText(article.by);
+        holder.mTimePostedTextView.setText(article.time);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,29 +53,41 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
                 }
             }
         });
+
+        if (position == getItemCount() - 1) holder.mDivider.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mArticles.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mTitleTextView;
+        public final TextView mPreviewView;
+        public final TextView mAuthorTextView;
+        public final TextView mTimePostedTextView;
+        public final ImageButton mBookmarkButton;
+        public final ImageButton mCommentButton;
+        public final View mDivider;
         public DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mTitleTextView = view.findViewById(R.id.title_text_view);
+            mPreviewView = view.findViewById(R.id.preview_text_view);
+            mAuthorTextView = view.findViewById(R.id.author_text_view);
+            mTimePostedTextView = view.findViewById(R.id.time_text_view);
+            mBookmarkButton = view.findViewById(R.id.bookmark_button);
+            mCommentButton = view.findViewById(R.id.comment_button);
+            mDivider = view.findViewById(R.id.article_divider);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mPreviewView.getText() + "'";
         }
     }
 }
