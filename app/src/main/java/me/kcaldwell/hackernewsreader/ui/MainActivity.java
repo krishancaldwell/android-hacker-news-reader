@@ -1,15 +1,15 @@
 package me.kcaldwell.hackernewsreader.ui;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import me.kcaldwell.hackernewsreader.R;
+import me.kcaldwell.hackernewsreader.data.FeedItem;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
-import me.kcaldwell.hackernewsreader.dummy.DummyContent;
 
 /**
  * MainActivity of the app. Displays a list of articles pulled from the HackerNews API
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     }
 
     @Override
-    public void onArticleSelected(DummyContent.DummyItem item) {
+    public void onArticleSelected(FeedItem item) {
 
     }
 }

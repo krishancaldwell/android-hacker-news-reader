@@ -9,38 +9,39 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:paddingTop="18dp"
+        android:paddingTop="12dp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:paddingBottom="18dp">
+        android:paddingBottom="12dp">
 
         <TextView
             android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/merriweather_sans"
-            android:maxLines="2"
-            android:text="Cool story"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="#EAEAEA"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/preview_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="70dp"
             android:ellipsize="end"
             android:fontFamily="@font/merriweather_sans"
             android:maxLines="2"
-            android:text="Spicy jalapeno bacon ipsum dolor amet shoulder swine leberkas corned beef bresaola tenderloin. Beef ribs brisket prosciutto ball tip andouille. Andouille boudin tenderloin capicola pig ground round tongue cupim porchetta burgdoggen. Pork jowl jerky, beef ribs ground round pork chop pastrami brisket. Pig beef ribs pork belly frankfurter picanha rump tail salami alcatra chicken porchetta meatloaf. Bacon pork belly pork loin ribeye picanha, ham strip steak pancetta brisket. Tri-tip strip steak boudin burgdoggen pork belly corned beef."
+            android:text="Doing more than 40 push-ups shows you’re 96% less likely to get a heart attack"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="#EAEAEA"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/domain_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="70dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/merriweather_sans"
+            android:maxLines="1"
+            android:text="https://www.studyfinds.org/men-more-than-40-push-ups-heart-disease/"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textColor="#80EAEAEA"
-            app:layout_constraintBottom_toBottomOf="@id/author_text_view"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/title_text_view" />
+            app:layout_constraintBottom_toTopOf="@id/author_text_view" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/icon_holder"

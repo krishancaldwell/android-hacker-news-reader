@@ -3,7 +3,6 @@ package me.kcaldwell.hackernewsreader.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,12 +15,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.adapters.ArticleRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.News;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
-import me.kcaldwell.hackernewsreader.dummy.DummyContent;
-import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
@@ -34,6 +32,7 @@ public class ArticleListFragment extends Fragment {
     private static final String TAG = ArticleListFragment.class.getSimpleName();
 
     private Realm mRealm;
+    private ArticleRecyclerViewAdapter mAdapter;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -74,19 +73,17 @@ public class ArticleListFragment extends Fragment {
 
         mRealm = Realm.getDefaultInstance();
 
+        getArticles();
+
         // Set the adapter
         if (rootView instanceof RecyclerView) {
             Context context = rootView.getContext();
             RecyclerView recyclerView = (RecyclerView) rootView;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new ArticleRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            mAdapter = new ArticleRecyclerViewAdapter(mRealm.where(FeedItem.class).findAll(), mListener);
+            recyclerView.setAdapter(mAdapter);
         }
 
-        getArticles();
 
         return rootView;
     }
@@ -121,7 +118,9 @@ public class ArticleListFragment extends Fragment {
     private void getArticles() {
         News.get(getActivity(), response -> {
             final FeedItem feedItem = new FeedItem();
+            RealmResults<FeedItem> items = mRealm.where(FeedItem.class).findAll();
             mRealm.executeTransaction(realm -> {
+                items.deleteAllFromRealm();
                 for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject article = response.getJSONObject(i);
@@ -149,6 +148,12 @@ public class ArticleListFragment extends Fragment {
         });
     }
 
+    private void refreshArticles() {
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -161,6 +166,6 @@ public class ArticleListFragment extends Fragment {
      */
     public interface OnArticleSelectedListener {
         // TODO: Update argument type and name
-        void onArticleSelected(DummyItem item);
+        void onArticleSelected(FeedItem feedItem);
     }
 }
