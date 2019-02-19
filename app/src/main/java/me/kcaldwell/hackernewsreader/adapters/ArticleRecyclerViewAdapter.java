@@ -48,6 +48,12 @@ public class ArticleRecyclerViewAdapter extends RealmRecyclerViewAdapter<FeedIte
             holder.mDomainTextView.setText(item.getDomain());
         }
         holder.mAuthorTextView.setText(item.getAuthor());
+        if (item.getPoints() == null || item.getPoints().equals("null")) {
+            holder.mPointsTextView.setText("");
+        }
+        else {
+            holder.mPointsTextView.setText("+" + item.getPoints());
+        }
         holder.mTimePostedTextView.setText(item.getTimeAgo());
 
         holder.mView.setOnClickListener(v -> {
@@ -72,6 +78,7 @@ public class ArticleRecyclerViewAdapter extends RealmRecyclerViewAdapter<FeedIte
         public final TextView mDomainTextView;
         public final TextView mAuthorTextView;
         public final TextView mTimePostedTextView;
+        public final TextView mPointsTextView;
         public final ImageButton mBookmarkButton;
         public final ImageButton mCommentButton;
         public final View mDivider;
@@ -84,6 +91,7 @@ public class ArticleRecyclerViewAdapter extends RealmRecyclerViewAdapter<FeedIte
             mDomainTextView = view.findViewById(R.id.domain_text_view);
             mAuthorTextView = view.findViewById(R.id.author_text_view);
             mTimePostedTextView = view.findViewById(R.id.time_text_view);
+            mPointsTextView = view.findViewById(R.id.points_text_view);
             mBookmarkButton = view.findViewById(R.id.bookmark_button);
             mCommentButton = view.findViewById(R.id.comment_button);
             mDivider = view.findViewById(R.id.article_divider);
