@@ -1,4 +1,4 @@
-package me.kcaldwell.hackernewsreader;
+package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,10 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import me.kcaldwell.hackernewsreader.api.API;
+import io.realm.Realm;
+import me.kcaldwell.hackernewsreader.R;
+import me.kcaldwell.hackernewsreader.adapters.ArticleRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.News;
+import me.kcaldwell.hackernewsreader.data.FeedItem;
 import me.kcaldwell.hackernewsreader.dummy.DummyContent;
 import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 
@@ -28,6 +32,8 @@ import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 public class ArticleListFragment extends Fragment {
 
     private static final String TAG = ArticleListFragment.class.getSimpleName();
+
+    private Realm mRealm;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -66,6 +72,8 @@ public class ArticleListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
+        mRealm = Realm.getDefaultInstance();
+
         // Set the adapter
         if (rootView instanceof RecyclerView) {
             Context context = rootView.getContext();
@@ -101,20 +109,43 @@ public class ArticleListFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mRealm != null) {
+            mRealm.close();
+        }
+    }
+
     // Get articles
     private void getArticles() {
-        News.get(getActivity(), new API.ResponseCallback() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Log.i(TAG, response.toString());
-            }
-        }, new API.ErrorCallback() {
-            @Override
-            public void onError() {
-                Log.e(TAG, "An error occurred");
+        News.get(getActivity(), response -> {
+            final FeedItem feedItem = new FeedItem();
+            mRealm.executeTransaction(realm -> {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject article = response.getJSONObject(i);
+                        feedItem.setId(article.getLong("id"));
+                        feedItem.setTitle(article.getString("title"));
+                        feedItem.setPoints(article.getInt("points"));
+                        feedItem.setAuthor(article.getString("user"));
+                        feedItem.setTime(article.getLong("time"));
+                        feedItem.setTimeAgo(article.getString("time_ago"));
+                        feedItem.setCommentsCount(article.getInt("comments_count"));
+                        feedItem.setType(article.getString("type"));
+                        feedItem.setUrl(article.getString("url"));
+                        feedItem.setDomain(article.getString("domain"));
+                        mRealm.insert(feedItem);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
-                Toast.makeText(getActivity(), "There was an error updating the stories", Toast.LENGTH_LONG).show();
-            }
+        }, () -> {
+            Log.e(TAG, "An error occurred");
+
+            Toast.makeText(getActivity(), "There was an error updating the stories", Toast.LENGTH_LONG).show();
         });
     }
 

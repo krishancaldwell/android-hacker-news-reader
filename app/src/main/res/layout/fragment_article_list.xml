@@ -7,5 +7,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".ArticleListFragment"
+    tools:context=".ui.ArticleListFragment"
     tools:listitem="@layout/item_article" />

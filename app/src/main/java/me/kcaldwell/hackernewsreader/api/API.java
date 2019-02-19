@@ -4,14 +4,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class API {
 
@@ -25,31 +22,25 @@ public class API {
 
         // Create request
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.i(tag, "Response received from " + url + ": " + response.toString());
-                        try {
-                            responseListener.onResponse(new JSONArray(response.toString()));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                response -> {
+                    Log.i(tag, "Response received from " + url + ": " + response.toString());
+                    try {
+                        responseListener.onResponse(new JSONArray(response.toString()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(tag, "A volley error occurred with: " + url);
-                        String message = "";
-                        if (error != null) {
-                            message += error.toString();
-                            if (error.networkResponse != null) {
-                                message += ". " + error.networkResponse.toString();
-                            }
+                error -> {
+                    Log.e(tag, "A volley error occurred with: " + url);
+                    String message = "";
+                    if (error != null) {
+                        message += error.toString();
+                        if (error.networkResponse != null) {
+                            message += ". " + error.networkResponse.toString();
                         }
-                        Log.e(tag, "Error message: " + message);
-                        errorListener.onError();
                     }
+                    Log.e(tag, "Error message: " + message);
+                    errorListener.onError();
                 });
 
         // post the request to queue
@@ -65,31 +56,25 @@ public class API {
 
         // create request
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.i(tag, "Response received from " + url + ": " + response.toString());
-                        try {
-                            responseListener.onResponse(new JSONArray(response.toString()));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                response -> {
+                    Log.i(tag, "Response received from " + url + ": " + response.toString());
+                    try {
+                        responseListener.onResponse(new JSONArray(response.toString()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(tag, "A volley error occurred with: " + url);
-                        String message = "";
-                        if (error != null) {
-                            message += error.toString();
-                            if (error.networkResponse != null) {
-                                message += ". " + error.networkResponse.toString();
-                            }
+                error -> {
+                    Log.e(tag, "A volley error occurred with: " + url);
+                    String message = "";
+                    if (error != null) {
+                        message += error.toString();
+                        if (error.networkResponse != null) {
+                            message += ". " + error.networkResponse.toString();
                         }
-                        Log.e(tag, "Error message is: " + message);
-                        errorListener.onError();
                     }
+                    Log.e(tag, "Error message is: " + message);
+                    errorListener.onError();
                 });
         // post the request to queue
         Log.i(LOG, "Making request to: " + url);

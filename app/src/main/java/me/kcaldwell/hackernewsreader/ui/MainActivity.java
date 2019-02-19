@@ -1,4 +1,4 @@
-package me.kcaldwell.hackernewsreader;
+package me.kcaldwell.hackernewsreader.ui;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,7 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import me.kcaldwell.hackernewsreader.ArticleListFragment.OnArticleSelectedListener;
+import me.kcaldwell.hackernewsreader.R;
+import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 import me.kcaldwell.hackernewsreader.dummy.DummyContent;
 
 /**

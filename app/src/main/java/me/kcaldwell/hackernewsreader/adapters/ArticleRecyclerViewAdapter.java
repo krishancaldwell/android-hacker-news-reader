@@ -1,4 +1,4 @@
-package me.kcaldwell.hackernewsreader;
+package me.kcaldwell.hackernewsreader.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +11,8 @@ import com.github.kevinsawicki.timeago.TimeAgo;
 
 import java.util.List;
 
-import me.kcaldwell.hackernewsreader.ArticleListFragment.OnArticleSelectedListener;
+import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
+import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 
 /**
@@ -22,9 +23,9 @@ import me.kcaldwell.hackernewsreader.dummy.DummyContent.DummyItem;
 public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecyclerViewAdapter.ViewHolder> {
 
     private final List<DummyItem> mArticles;
-    private final ArticleListFragment.OnArticleSelectedListener mListener;
+    private final OnArticleSelectedListener mListener;
 
-    public ArticleRecyclerViewAdapter(List<DummyItem> articles, ArticleListFragment.OnArticleSelectedListener listener) {
+    public ArticleRecyclerViewAdapter(List<DummyItem> articles, OnArticleSelectedListener listener) {
         mArticles = articles;
         mListener = listener;
     }
@@ -50,14 +51,11 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
         String time = timeUtil.time(currentTime - article.time, false);
         holder.mTimePostedTextView.setText(time);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onArticleSelected(holder.mItem);
-                }
+        holder.mView.setOnClickListener(v -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onArticleSelected(holder.mItem);
             }
         });
 
