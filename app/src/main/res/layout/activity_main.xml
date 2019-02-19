@@ -23,10 +23,16 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/title_text_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:fontFamily="@font/merriweather_sans"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textAlignment="center"
                 android:textColor="@color/color_primary"
                 android:textSize="20sp"
                 android:text="@string/main_title"/>

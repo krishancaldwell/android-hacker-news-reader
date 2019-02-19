@@ -104,6 +104,26 @@ public class ArticleFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mWebview.onResume();
+        mWebview.resumeTimers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mWebview.onPause();
+        mWebview.pauseTimers();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mWebview.destroy();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnArticleBookmarkListener) {

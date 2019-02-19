@@ -7,11 +7,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
-import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleFragment.OnArticleBookmarkListener;
+import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 
 /**
  * MainActivity of the app. Displays a list of articles pulled from the HackerNews API
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
 
     private FragmentManager mFragmentManager;
 
+    private TextView mTitleTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+
+        mTitleTextView = findViewById(R.id.title_text_view);
 
         mFragmentManager = getSupportFragmentManager();
 
@@ -43,7 +48,9 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         transaction.commit();
     }
 
-    private void navigateToArticleFragment(String url) {
+    private void navigateToArticleFragment(String title, String url) {
+        mTitleTextView.setText(title);
+
         Fragment fragment = new ArticleFragment();
 
         Bundle bundle = new Bundle();
@@ -65,8 +72,14 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     }
 
     @Override
+    public void onBackPressed() {
+        mTitleTextView.setText(getString(R.string.main_title));
+        super.onBackPressed();
+    }
+
+    @Override
     public void onArticleSelected(FeedItem item) {
-        navigateToArticleFragment(item.getUrl());
+        navigateToArticleFragment(item.getTitle(), item.getUrl());
     }
 
     @Override
