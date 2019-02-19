@@ -1,12 +1,17 @@
 package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import me.kcaldwell.hackernewsreader.R;
 
@@ -14,7 +19,7 @@ import me.kcaldwell.hackernewsreader.R;
 /**
  * A simple {@link Fragment} subclass for loading an article.
  * Activities that contain this fragment must implement the
- * {@link ArticleFragment.OnFragmentInteractionListener} interface
+ * {@link OnArticleBookmarkListener} interface
  * to handle interaction events.
  * Use the {@link ArticleFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -22,14 +27,15 @@ import me.kcaldwell.hackernewsreader.R;
 public class ArticleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_URL = "url";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mURL;
 
-    private OnFragmentInteractionListener mListener;
+    private OnArticleBookmarkListener mListener;
+
+    private ProgressBar mProgressBar;
+    private WebView mWebview;
 
     public ArticleFragment() {
         // Required empty public constructor
@@ -40,15 +46,13 @@ public class ArticleFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ArticleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ArticleFragment newInstance(String param1, String param2) {
+    public static ArticleFragment newInstance(String param1) {
         ArticleFragment fragment = new ArticleFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_URL, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,8 +61,7 @@ public class ArticleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mURL = getArguments().getString(ARG_URL);
         }
     }
 
@@ -66,24 +69,48 @@ public class ArticleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_article, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_article, container, false);
+
+        mProgressBar = rootView.findViewById(R.id.progress_bar);
+        mWebview = rootView.findViewById(R.id.webview);
+
+        mWebview.loadUrl(mURL);
+
+        WebSettings webSettings = mWebview.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setSupportZoom(true);
+
+        // Set the colour of the progress bar
+        mProgressBar.setProgressTintList(ColorStateList
+                .valueOf(getResources().getColor(R.color.color_primary)));
+        mProgressBar.setMax(100);
+        mProgressBar.setProgress(1);
+
+        mWebview.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                mProgressBar.setProgress(newProgress);
+            }
+        });
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onArticleBookmarked(uri);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnArticleBookmarkListener) {
+            mListener = (OnArticleBookmarkListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnArticleBookmarkListener");
         }
     }
 
@@ -103,8 +130,7 @@ public class ArticleFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface OnArticleBookmarkListener {
+        void onArticleBookmarked(Uri uri);
     }
 }
