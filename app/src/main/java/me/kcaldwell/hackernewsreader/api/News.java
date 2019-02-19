@@ -7,11 +7,13 @@ import me.kcaldwell.hackernewsreader.utils.Constants;
 public class News {
 
     private static final String LOG = News.class.getSimpleName();
-    private static final String url = Constants.URL_NEWS;
 
     public static void get(final Context context,
+                           final int page,
                            final API.ResponseCallback responseCallback,
                            final API.ErrorCallback errorCallback) {
+
+        String url = Constants.URL_NEWS + page + Constants.URL_END;
 
         API.get(context, url, LOG,
                 response -> responseCallback.onResponse(response),

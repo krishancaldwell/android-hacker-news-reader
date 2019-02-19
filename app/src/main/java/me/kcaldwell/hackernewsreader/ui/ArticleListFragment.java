@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.adapters.ArticleRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.News;
@@ -34,10 +33,12 @@ public class ArticleListFragment extends Fragment {
     private Realm mRealm;
     private ArticleRecyclerViewAdapter mAdapter;
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private int mPreviousTotal = 0;
+    private boolean mLoading = true;
+    private int mVisibleThreshold = 5;
+    private int mPage = 1;
+    int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount;
+
     private OnArticleSelectedListener mListener;
 
     /**
@@ -52,7 +53,6 @@ public class ArticleListFragment extends Fragment {
     public static ArticleListFragment newInstance(int columnCount) {
         ArticleListFragment fragment = new ArticleListFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,10 +60,6 @@ public class ArticleListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -79,9 +75,37 @@ public class ArticleListFragment extends Fragment {
         if (rootView instanceof RecyclerView) {
             Context context = rootView.getContext();
             RecyclerView recyclerView = (RecyclerView) rootView;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(linearLayoutManager);
             mAdapter = new ArticleRecyclerViewAdapter(mRealm.where(FeedItem.class).findAll(), mListener);
             recyclerView.setAdapter(mAdapter);
+
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    if (dy > 0) { //check for downwards scrolling
+                        mVisibleItemCount = linearLayoutManager.getChildCount();
+                        mTotalItemCount = linearLayoutManager.getItemCount();
+                        mFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+
+                        if (mLoading) {
+                            if (mTotalItemCount > mPreviousTotal) {
+                                mLoading = false;
+                                mPreviousTotal = mTotalItemCount;
+                            }
+                        }
+                        else if ((mTotalItemCount - mVisibleItemCount) <= (mFirstVisibleItem + mVisibleThreshold)) {
+                            // End has been reached
+                            Log.i(TAG, "End of list reached");
+
+                            // Do something
+                            mLoading = true;
+                            mPage++;
+                            getArticles();
+                        }
+                    }
+                }
+            });
         }
 
 
@@ -116,30 +140,37 @@ public class ArticleListFragment extends Fragment {
 
     // Get articles
     private void getArticles() {
-        News.get(getActivity(), response -> {
+        News.get(getActivity(), mPage, response -> {
             final FeedItem feedItem = new FeedItem();
-            RealmResults<FeedItem> items = mRealm.where(FeedItem.class).findAll();
             mRealm.executeTransaction(realm -> {
-                items.deleteAllFromRealm();
                 for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject article = response.getJSONObject(i);
                         feedItem.setId(article.getLong("id"));
                         feedItem.setTitle(article.getString("title"));
-                        feedItem.setPoints(article.getInt("points"));
-                        feedItem.setAuthor(article.getString("user"));
+                        if (article.has("points")) {
+                            feedItem.setPoints(article.getInt("points"));
+                        }
+                        if (article.has("user")) {
+                            feedItem.setAuthor(article.getString("user"));
+                        }
                         feedItem.setTime(article.getLong("time"));
                         feedItem.setTimeAgo(article.getString("time_ago"));
                         feedItem.setCommentsCount(article.getInt("comments_count"));
                         feedItem.setType(article.getString("type"));
-                        feedItem.setUrl(article.getString("url"));
-                        feedItem.setDomain(article.getString("domain"));
-                        mRealm.insert(feedItem);
+                        if (article.has("url")) {
+                            feedItem.setUrl(article.getString("url"));
+                        }
+                        if (article.has("domain")) {
+                            feedItem.setDomain(article.getString("domain"));
+                        }
+                        mRealm.copyToRealmOrUpdate(feedItem);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
+            refreshArticles();
 
         }, () -> {
             Log.e(TAG, "An error occurred");

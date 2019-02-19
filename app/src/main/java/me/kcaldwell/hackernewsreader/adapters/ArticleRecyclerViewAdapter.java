@@ -42,7 +42,12 @@ public class ArticleRecyclerViewAdapter extends RealmRecyclerViewAdapter<FeedIte
         final FeedItem item = getItem(position);
         holder.mFeedItem = item;
         holder.mTitleTextView.setText(item.getTitle());
-        holder.mDomainTextView.setText(item.getDomain());
+        if (item.getDomain() == null || item.getDomain().equals("null")) {
+            holder.mDomainTextView.setText("");
+        }
+        else {
+            holder.mDomainTextView.setText(item.getDomain());
+        }
         holder.mAuthorTextView.setText(item.getAuthor());
         holder.mTimePostedTextView.setText(item.getTimeAgo());
 
