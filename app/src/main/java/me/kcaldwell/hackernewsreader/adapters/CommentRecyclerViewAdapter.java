@@ -10,15 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import io.realm.OrderedRealmCollection;
-import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.Comment;
 import me.kcaldwell.hackernewsreader.ui.CommentListFragment.OnListFragmentInteractionListener;
-import me.kcaldwell.hackernewsreader.ui.dummy.DummyContent.DummyItem;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Comment} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
