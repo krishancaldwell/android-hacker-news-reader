@@ -26,29 +26,29 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <TextView
-            android:id="@+id/separator_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="•"
-            android:textColor="#80EAEAEA"
-            android:textSize="14sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/author_text_view"/>
+        <!--<TextView-->
+            <!--android:id="@+id/separator_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:text="•"-->
+            <!--android:textColor="#80EAEAEA"-->
+            <!--android:textSize="14sp"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:layout_constraintStart_toEndOf="@id/author_text_view"/>-->
 
-        <TextView
-            android:id="@+id/karma_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="#868686"
-            android:fontFamily="@font/merriweather_sans"
-            android:textSize="14sp"
-            android:text="+148"
-            android:textAppearance="?attr/textAppearanceListItem"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/separator_view" />
+        <!--<TextView-->
+            <!--android:id="@+id/karma_text_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:textColor="#868686"-->
+            <!--android:fontFamily="@font/merriweather_sans"-->
+            <!--android:textSize="14sp"-->
+            <!--android:text="+148"-->
+            <!--android:textAppearance="?attr/textAppearanceListItem"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:layout_constraintStart_toEndOf="@id/separator_view" />-->
 
         <TextView
             android:id="@+id/content_text_view"

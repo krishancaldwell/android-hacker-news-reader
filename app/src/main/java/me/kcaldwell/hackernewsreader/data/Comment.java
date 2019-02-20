@@ -1,26 +1,19 @@
 package me.kcaldwell.hackernewsreader.data;
 
-import java.util.List;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Item extends RealmObject {
+public class Comment extends RealmObject {
 
     private @PrimaryKey long id;
-    private String title;
-    private Integer points;
     private String author;
     private long time;
     private String timeAgo;
     private String content;
-    private Boolean deleted;
-    private Boolean dead;
     private String type;
     private String url;
-    private String domain;
-    private RealmList<Item> comments;
+    private RealmList<Comment> comments;
     private int level;
     private int commentsCount;
 
@@ -30,22 +23,6 @@ public class Item extends RealmObject {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Integer getPoints() {
-        return points;
-    }
-
-    public void setPoints(Integer points) {
-        this.points = points;
     }
 
     public String getAuthor() {
@@ -80,22 +57,6 @@ public class Item extends RealmObject {
         this.content = content;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Boolean getDead() {
-        return dead;
-    }
-
-    public void setDead(Boolean dead) {
-        this.dead = dead;
-    }
-
     public String getType() {
         return type;
     }
@@ -112,19 +73,11 @@ public class Item extends RealmObject {
         this.url = url;
     }
 
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
-    public RealmList<Item> getComments() {
+    public RealmList<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(RealmList<Item> comments) {
+    public void setComments(RealmList<Comment> comments) {
         this.comments = comments;
     }
 
@@ -146,19 +99,14 @@ public class Item extends RealmObject {
 
     @Override
     public String toString() {
-        return "Item{" +
+        return "Comment{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
-                ", points=" + points +
                 ", author='" + author + '\'' +
                 ", time=" + time +
                 ", timeAgo='" + timeAgo + '\'' +
                 ", content='" + content + '\'' +
-                ", deleted=" + deleted +
-                ", dead=" + dead +
                 ", type='" + type + '\'' +
                 ", url='" + url + '\'' +
-                ", domain='" + domain + '\'' +
                 ", comments=" + comments +
                 ", level=" + level +
                 ", commentsCount=" + commentsCount +
