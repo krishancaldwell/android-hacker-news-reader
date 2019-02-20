@@ -2,6 +2,7 @@ package me.kcaldwell.hackernewsreader.adapters;
 
 import android.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
         indentView(holder.mView, comment.getLevel());
 
         holder.mAuthorTextView.setText(comment.getAuthor());
-        holder.mContentView.setText(comment.getContent());
+        holder.mContentView.setText(Html.fromHtml(comment.getContent()));
         holder.mTimeTextView.setText(comment.getTimeAgo());
         int commentsCount = comment.getCommentsCount();
         String commentsString;

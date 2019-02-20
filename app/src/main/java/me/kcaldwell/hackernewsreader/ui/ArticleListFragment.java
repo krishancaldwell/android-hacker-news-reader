@@ -67,9 +67,10 @@ public class ArticleListFragment extends Fragment {
         mRealm = Realm.getDefaultInstance();
 
         // Remove stale data from Realm
-        long oneDayAgo = 86400000L;
+        long oneHourAgo = 3600000L;
         long now = System.currentTimeMillis();
-        long yesterday = now - oneDayAgo;
+        long yesterday = now - oneHourAgo;
+
         RealmResults<FeedItem> staleItems = mRealm.where(FeedItem.class)
                 .lessThan("time", yesterday)
                 .findAll();
@@ -77,6 +78,7 @@ public class ArticleListFragment extends Fragment {
             mRealm.executeTransaction(realm -> staleItems.deleteAllFromRealm());
         }
 
+        // Fetch current data
         getArticles();
 
         // Set the adapter

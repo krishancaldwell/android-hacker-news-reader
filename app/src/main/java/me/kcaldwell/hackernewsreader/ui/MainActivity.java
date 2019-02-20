@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import me.kcaldwell.hackernewsreader.R;
@@ -29,15 +30,16 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
 
     private FragmentManager mFragmentManager;
 
+    private Toolbar mToolbar;
     private TextView mTitleTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar);
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
 
         mTitleTextView = findViewById(R.id.title_text_view);
 
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     }
 
     private void loadArticleListFragment() {
+        mToolbar.setVisibility(View.VISIBLE);
+
         // Load initial Fragment
         Fragment fragment = new ArticleListFragment();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
@@ -77,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         transaction.commit();
     }
 
-    private void navigateToArticleComments(String title, long id) {
-        mTitleTextView.setText(title);
+    private void navigateToArticleComments(long id) {
+        mToolbar.setVisibility(View.GONE);
 
         Fragment fragment = new CommentListFragment();
 
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
 
     @Override
     public void onCommentsSelected(FeedItem item) {
-        navigateToArticleComments(item.getTitle(), item.getId());
+        navigateToArticleComments(item.getId());
     }
 
     @Override
