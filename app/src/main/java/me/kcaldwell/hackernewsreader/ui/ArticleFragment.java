@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import me.kcaldwell.hackernewsreader.R;
+import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
 
 
 /**
@@ -79,6 +81,8 @@ public class ArticleFragment extends Fragment {
         WebSettings webSettings = mWebview.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
 
         // Set the colour of the progress bar
         mProgressBar.setProgressTintList(ColorStateList
@@ -92,6 +96,10 @@ public class ArticleFragment extends Fragment {
                 mProgressBar.setProgress(newProgress);
             }
         });
+
+        // Allows the WebView to handle links that may be presented in the article. Without this,
+        // the app would attempt to open the native browser to handle it.
+        mWebview.setWebViewClient(new HNWebviewClient());
 
         return rootView;
     }
