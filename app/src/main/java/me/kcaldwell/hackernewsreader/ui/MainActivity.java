@@ -11,11 +11,11 @@ import android.widget.TextView;
 
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
+import me.kcaldwell.hackernewsreader.data.Item;
 import me.kcaldwell.hackernewsreader.ui.ArticleFragment.OnArticleBookmarkListener;
-import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleCommentsSelectedListener;
+import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 import me.kcaldwell.hackernewsreader.ui.CommentFragment.OnListFragmentInteractionListener;
-import me.kcaldwell.hackernewsreader.ui.dummy.DummyContent;
 
 /**
  * MainActivity of the app. Displays a list of articles pulled from the HackerNews API
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-        
+    public void onListFragmentInteraction(Item item) {
+
     }
 }

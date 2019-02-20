@@ -3,7 +3,6 @@ package me.kcaldwell.hackernewsreader.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.realm.Realm;
 import me.kcaldwell.hackernewsreader.R;
+import me.kcaldwell.hackernewsreader.adapters.CommentRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.Item;
 import me.kcaldwell.hackernewsreader.ui.dummy.DummyContent;
 import me.kcaldwell.hackernewsreader.ui.dummy.DummyContent.DummyItem;
@@ -26,8 +27,12 @@ public class CommentFragment extends Fragment {
 
     public static final String TAG = CommentFragment.class.getSimpleName();
 
-    // TODO: Customize parameters
+    private Realm mRealm;
     private String mArticleId;
+
+    private RecyclerView mRecyclerView;
+    private CommentRecyclerViewAdapter mAdapter;
+
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -49,19 +54,28 @@ public class CommentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comment_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_comment_list, container, false);
+
+        mRealm = Realm.getDefaultInstance();
+
+        mRecyclerView = rootView.findViewById(R.id.list);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new CommentRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-        }
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
+        mAdapter = new CommentRecyclerViewAdapter(mRealm.where(me.kcaldwell.hackernewsreader.data.Item.class).findAll(), mListener);
+        mRecyclerView.setAdapter(mAdapter);
 
         getComments();
 
-        return view;
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mRealm != null) {
+            mRealm.close();
+        }
     }
 
     private void getComments() {
@@ -102,6 +116,6 @@ public class CommentFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(me.kcaldwell.hackernewsreader.data.Item item);
     }
 }
