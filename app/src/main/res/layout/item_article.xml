@@ -45,30 +45,39 @@
             app:layout_constraintBottom_toTopOf="@id/author_text_view" />
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/icon_holder"
+            android:id="@+id/comment_holder"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <ImageButton
-                android:id="@+id/bookmark_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_bookmark_empty"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/comment_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_comment"
-                app:layout_constraintEnd_toStartOf="@id/bookmark_button"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/comment_count_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:fontFamily="@font/merriweather_sans"
+                android:text="666"
+                android:textColor="#EAEAEA"
+                android:textSize="12sp"
+                android:clickable="false"
+                app:layout_constraintEnd_toEndOf="@+id/comment_button"
+                app:layout_constraintStart_toStartOf="@+id/comment_button"
+                app:layout_constraintTop_toBottomOf="@id/comment_button" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -84,14 +93,26 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
-            android:id="@+id/points_text_view"
+            android:id="@+id/separator_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="•"
+            android:textColor="#80EAEAEA"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/author_text_view"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/karma_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="+101"
             android:textColor="#80EAEAEA"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBaseline_toBaselineOf="@id/domain_text_view"/>
+            app:layout_constraintStart_toEndOf="@id/separator_view"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/time_text_view"

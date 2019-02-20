@@ -40,7 +40,8 @@ public class ArticleListFragment extends Fragment {
     private int mPage = 1;
     int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount;
 
-    private OnArticleSelectedListener mListener;
+    private OnArticleSelectedListener mArticleListener;
+    private OnArticleCommentsSelectedListener mCommentsListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -84,7 +85,7 @@ public class ArticleListFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) rootView;
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
-            mAdapter = new ArticleRecyclerViewAdapter(mRealm.where(FeedItem.class).findAll(), mListener);
+            mAdapter = new ArticleRecyclerViewAdapter(mRealm.where(FeedItem.class).findAll(), mArticleListener, mCommentsListener);
             recyclerView.setAdapter(mAdapter);
 
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -124,17 +125,23 @@ public class ArticleListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnArticleSelectedListener) {
-            mListener = (OnArticleSelectedListener) context;
+            mArticleListener = (OnArticleSelectedListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnArticleSelectedListener");
+        }
+        if (context instanceof OnArticleCommentsSelectedListener) {
+            mCommentsListener = (OnArticleCommentsSelectedListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnArticleCommentsSelectedListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mArticleListener = null;
+        mCommentsListener = null;
     }
 
     @Override
@@ -206,5 +213,9 @@ public class ArticleListFragment extends Fragment {
     public interface OnArticleSelectedListener {
         // TODO: Update argument type and name
         void onArticleSelected(FeedItem feedItem);
+    }
+
+    public interface OnArticleCommentsSelectedListener {
+        void onCommentsSelected(FeedItem feedItem);
     }
 }

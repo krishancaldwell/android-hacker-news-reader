@@ -13,7 +13,7 @@ public class Ask {
                            final API.ResponseCallback responseCallback,
                            final API.ErrorCallback errorCallback) {
 
-        API.get(context, url, LOG,
+        API.getArray(context, url, LOG,
                 response -> responseCallback.onResponse(response),
                 () -> errorCallback.onError());
     }

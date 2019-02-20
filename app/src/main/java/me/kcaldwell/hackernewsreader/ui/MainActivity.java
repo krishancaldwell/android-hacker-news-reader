@@ -13,11 +13,17 @@ import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
 import me.kcaldwell.hackernewsreader.ui.ArticleFragment.OnArticleBookmarkListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
+import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleCommentsSelectedListener;
+import me.kcaldwell.hackernewsreader.ui.CommentFragment.OnListFragmentInteractionListener;
+import me.kcaldwell.hackernewsreader.ui.dummy.DummyContent;
 
 /**
  * MainActivity of the app. Displays a list of articles pulled from the HackerNews API
  */
-public class MainActivity extends AppCompatActivity implements OnArticleSelectedListener, OnArticleBookmarkListener {
+public class MainActivity extends AppCompatActivity implements OnArticleSelectedListener,
+                                                               OnArticleBookmarkListener,
+                                                               OnArticleCommentsSelectedListener,
+                                                               OnListFragmentInteractionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -71,6 +77,29 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         transaction.commit();
     }
 
+    private void navigateToArticleComments(String title, long id) {
+        mTitleTextView.setText(title);
+
+        Fragment fragment = new CommentFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("id", String.valueOf(id));
+        fragment.setArguments(bundle);
+
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transaction.setCustomAnimations(
+                R.anim.enter_from_right,
+                R.anim.exit_to_left,
+                R.anim.enter_from_left,
+                R.anim.exit_to_right);
+
+        transaction.replace(R.id.container, fragment);
+
+        // Add the transaction to the back stack to preserve back navigation
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     @Override
     public void onBackPressed() {
         mTitleTextView.setText(getString(R.string.main_title));
@@ -83,7 +112,17 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     }
 
     @Override
+    public void onCommentsSelected(FeedItem item) {
+        navigateToArticleComments(item.getTitle(), item.getId());
+    }
+
+    @Override
     public void onArticleBookmarked(Uri uri) {
 
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+        
     }
 }

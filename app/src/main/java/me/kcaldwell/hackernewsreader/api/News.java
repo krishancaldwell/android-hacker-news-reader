@@ -15,7 +15,7 @@ public class News {
 
         String url = Constants.URL_NEWS + page + Constants.URL_END;
 
-        API.get(context, url, LOG,
+        API.getArray(context, url, LOG,
                 response -> responseCallback.onResponse(response),
                 () -> errorCallback.onError());
     }
