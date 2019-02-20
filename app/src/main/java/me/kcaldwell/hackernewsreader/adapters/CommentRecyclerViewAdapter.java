@@ -73,10 +73,10 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
 
     private void indentView(View view, int level) {
         // Determine margin to indent by
-        int marginLeft = 20 * level;
-        int marginBottom = level > 0 ? 20 : 10;
+        int marginLeft = 40 * level;
+        int marginTop = level > 0 ? 0 : 40;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(marginLeft, 0, 0, marginBottom);
+        layoutParams.setMargins(marginLeft, marginTop, 0, 0);
         view.setLayoutParams(layoutParams);
     }
 

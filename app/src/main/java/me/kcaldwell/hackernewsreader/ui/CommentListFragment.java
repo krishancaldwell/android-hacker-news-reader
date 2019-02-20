@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,7 @@ public class CommentListFragment extends Fragment {
     private Realm mRealm;
     private String mArticleId;
 
+    private TextView mCommentCountTextView;
     private RecyclerView mRecyclerView;
     private CommentRecyclerViewAdapter mAdapter;
 
@@ -66,12 +68,24 @@ public class CommentListFragment extends Fragment {
 
         mRealm = Realm.getDefaultInstance();
 
+        mCommentCountTextView = rootView.findViewById(R.id.comment_count_text_view);
         mRecyclerView = rootView.findViewById(R.id.list);
 
         // Set the adapter
-        RealmResults<Comment> parentComments = mRealm.where(Comment.class)
-                .sort("level", Sort.ASCENDING)
-                .findAll();
+        RealmResults<Comment> parentComments = mRealm.where(Comment.class).findAll();
+
+        int commentsCount = parentComments.size();
+        String commentsString;
+        if (commentsCount == 0) {
+            commentsString = "No comments";
+        }
+        else if (commentsCount == 1) {
+            commentsString = "1 comment";
+        }
+        else {
+            commentsString = commentsCount + " comments";
+        }
+        mCommentCountTextView.setText(commentsString);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         mAdapter = new CommentRecyclerViewAdapter(parentComments, mListener);
