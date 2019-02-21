@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
                 R.anim.enter_from_left,
                 R.anim.exit_to_right);
 
-        transaction.replace(R.id.container, fragment);
+        transaction.replace(R.id.container, fragment, "webview");
 
         // Add the transaction to the back stack to preserve back navigation
         transaction.addToBackStack(null);
@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
 
     @Override
     public void onBackPressed() {
+        mToolbar.setVisibility(View.VISIBLE);
         mTitleTextView.setText(getString(R.string.main_title));
         super.onBackPressed();
     }
