@@ -2,9 +2,9 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +18,7 @@ import org.json.JSONObject;
 import javax.annotation.Nullable;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
-import io.realm.Sort;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.adapters.CommentRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.Item;
@@ -107,19 +105,17 @@ public class CommentListFragment extends Fragment {
     private void getComments() {
         RealmResults<Comment> oldComments = mRealm.where(Comment.class).findAll();
         mRealm.executeTransaction(realm -> oldComments.deleteAllFromRealm());
-        Item.get(getActivity(), mArticleId, (response) -> {
-                    mRealm.executeTransaction(realm -> {
-                        JSONArray comments;
-                        try {
-                            comments = response.getJSONArray("comments");
-                            addCommentToRealm(realm, comments, null);
-                        }
-                        catch (JSONException e) {
-                            Log.e(TAG, "JSON Exception: " + e.getMessage());
-                            e.printStackTrace();
-                        }
-                    });
-                },
+        Item.get(getActivity(), mArticleId, (response) -> mRealm.executeTransaction(realm -> {
+            JSONArray comments;
+            try {
+                comments = response.getJSONArray("comments");
+                addCommentToRealm(realm, comments, null);
+            }
+            catch (JSONException e) {
+                Log.e(TAG, "JSON Exception: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }),
                 () -> Log.e(TAG, "An error occurred with the API call"));
     }
 
