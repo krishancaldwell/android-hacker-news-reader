@@ -2,14 +2,18 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +37,8 @@ public class ArticleListFragment extends Fragment {
 
     private Realm mRealm;
     private ArticleRecyclerViewAdapter mAdapter;
+    private View mLoadingView;
+    private LottieAnimationView mAnimationView;
 
     private int mPreviousTotal = 0;
     private boolean mLoading = true;
@@ -64,6 +70,10 @@ public class ArticleListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_article_list, container, false);
 
+        mLoadingView = rootView.findViewById(R.id.loading_mask);
+        mAnimationView = rootView.findViewById(R.id.animation_view);
+        RecyclerView recyclerView = rootView.findViewById(R.id.list);
+
         mRealm = Realm.getDefaultInstance();
 
         // Remove stale data from Realm
@@ -82,41 +92,40 @@ public class ArticleListFragment extends Fragment {
         getArticles();
 
         // Set the adapter
-        if (rootView instanceof RecyclerView) {
-            Context context = rootView.getContext();
-            RecyclerView recyclerView = (RecyclerView) rootView;
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-            recyclerView.setLayoutManager(linearLayoutManager);
-            mAdapter = new ArticleRecyclerViewAdapter(mRealm.where(FeedItem.class).findAll(), mArticleListener, mCommentsListener);
-            recyclerView.setAdapter(mAdapter);
+        Context context = rootView.getContext();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
 
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    if (dy > 0) { //check for downwards scrolling
-                        mVisibleItemCount = linearLayoutManager.getChildCount();
-                        mTotalItemCount = linearLayoutManager.getItemCount();
-                        mFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+        RealmResults<FeedItem> articles = mRealm.where(FeedItem.class).findAll();
 
-                        if (mLoading) {
-                            if (mTotalItemCount > mPreviousTotal) {
-                                mLoading = false;
-                                mPreviousTotal = mTotalItemCount;
-                            }
+        recyclerView.setLayoutManager(linearLayoutManager);
+        mAdapter = new ArticleRecyclerViewAdapter(articles, mArticleListener, mCommentsListener);
+        recyclerView.setAdapter(mAdapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) { //check for downwards scrolling
+                    mVisibleItemCount = linearLayoutManager.getChildCount();
+                    mTotalItemCount = linearLayoutManager.getItemCount();
+                    mFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+
+                    if (mLoading) {
+                        if (mTotalItemCount > mPreviousTotal) {
+                            mLoading = false;
+                            mPreviousTotal = mTotalItemCount;
                         }
-                        else if ((mTotalItemCount - mVisibleItemCount) <= (mFirstVisibleItem + mVisibleThreshold)) {
-                            // End has been reached
-                            Log.i(TAG, "End of list reached");
+                    } else if ((mTotalItemCount - mVisibleItemCount) <= (mFirstVisibleItem + mVisibleThreshold)) {
+                        // End has been reached
+                        Log.i(TAG, "End of list reached");
 
-                            // Do something
-                            mLoading = true;
-                            mPage++;
-                            getArticles();
-                        }
+                        // Do something
+                        mLoading = true;
+                        mPage++;
+                        getArticles();
                     }
                 }
-            });
-        }
+            }
+        });
 
 
         return rootView;
@@ -156,6 +165,7 @@ public class ArticleListFragment extends Fragment {
 
     // Get articles
     private void getArticles() {
+        toggleProgressViews(true);
         News.get(getActivity(), mPage, response -> {
             final FeedItem feedItem = new FeedItem();
             mRealm.executeTransaction(realm -> {
@@ -188,12 +198,19 @@ public class ArticleListFragment extends Fragment {
             });
 
             refreshArticles();
+            toggleProgressViews(false);
 
         }, () -> {
             Log.e(TAG, "An error occurred");
 
             Toast.makeText(getActivity(), "There was an error updating the stories", Toast.LENGTH_LONG).show();
         });
+    }
+
+    private void toggleProgressViews(boolean show) {
+        int visible = show ? View.VISIBLE : View.GONE;
+        mLoadingView.setVisibility(visible);
+        mAnimationView.setVisibility(visible);
     }
 
     private void refreshArticles() {
