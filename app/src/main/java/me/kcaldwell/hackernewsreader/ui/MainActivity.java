@@ -117,6 +117,11 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
                 super.onBackPressed();
             }
         }
+        else {
+            mToolbar.setVisibility(View.VISIBLE);
+            mTitleTextView.setText(getString(R.string.main_title));
+            super.onBackPressed();
+        }
     }
 
     @Override
