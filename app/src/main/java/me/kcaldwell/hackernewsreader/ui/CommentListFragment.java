@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,10 +38,13 @@ public class CommentListFragment extends Fragment {
 
     private Realm mRealm;
     private String mArticleId;
+    private RealmResults<Comment> mComments;
 
     private TextView mCommentCountTextView;
     private RecyclerView mRecyclerView;
     private CommentRecyclerViewAdapter mAdapter;
+    private View mLoadingView;
+    private LottieAnimationView mAnimationView;
 
     private OnListFragmentInteractionListener mListener;
 
@@ -68,11 +73,13 @@ public class CommentListFragment extends Fragment {
 
         mCommentCountTextView = rootView.findViewById(R.id.comment_count_text_view);
         mRecyclerView = rootView.findViewById(R.id.list);
+        mLoadingView = rootView.findViewById(R.id.loading_mask);
+        mAnimationView = rootView.findViewById(R.id.animation_view);
 
         // Set the adapter
-        RealmResults<Comment> parentComments = mRealm.where(Comment.class).findAll();
+        mComments = mRealm.where(Comment.class).findAll();
 
-        int commentsCount = parentComments.size();
+        int commentsCount = mComments.size();
         String commentsString;
         if (commentsCount == 0) {
             commentsString = "No comments";
@@ -85,13 +92,22 @@ public class CommentListFragment extends Fragment {
         }
         mCommentCountTextView.setText(commentsString);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        mAdapter = new CommentRecyclerViewAdapter(parentComments, mListener);
-        mRecyclerView.setAdapter(mAdapter);
+        setAdapter();
 
         getComments();
 
         return rootView;
+    }
+
+    private void setAdapter() {
+        if (mAdapter == null) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+        else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -102,7 +118,14 @@ public class CommentListFragment extends Fragment {
         }
     }
 
+    private void toggleProgressViews(boolean show) {
+        int visible = show ? View.VISIBLE : View.GONE;
+        mLoadingView.setVisibility(visible);
+        mAnimationView.setVisibility(visible);
+    }
+
     private void getComments() {
+        toggleProgressViews(true);
         RealmResults<Comment> oldComments = mRealm.where(Comment.class).findAll();
         mRealm.executeTransaction(realm -> oldComments.deleteAllFromRealm());
         Item.get(getActivity(), mArticleId, (response) -> mRealm.executeTransaction(realm -> {
@@ -115,6 +138,9 @@ public class CommentListFragment extends Fragment {
                 Log.e(TAG, "JSON Exception: " + e.getMessage());
                 e.printStackTrace();
             }
+
+            setAdapter();
+            toggleProgressViews(false);
         }),
                 () -> Log.e(TAG, "An error occurred with the API call"));
     }

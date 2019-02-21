@@ -21,7 +21,6 @@
             android:textColor="#868686"
             android:fontFamily="@font/merriweather_sans"
             android:textSize="14sp"
-            android:text="K Caldwell"
             android:textAppearance="?attr/textAppearanceListItem"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -34,9 +33,6 @@
             android:layout_marginBottom="8dp"
             android:textColor="@color/color_accent_secondary"
             android:fontFamily="@font/merriweather_sans"
-            android:text="Bacon ipsum dolor amet enim strip steak dolore ball tip pork dolor cillum aliqua fatback pastrami ullamco porchetta fugiat sunt. Dolor kielbasa nisi in enim venison chuck. Id sirloin laboris incididunt. Tongue jowl sed pastrami. Eu cillum labore laborum, voluptate pork jowl qui alcatra sirloin brisket salami pork belly. Ullamco pork belly reprehenderit burgdoggen fatback short ribs capicola in incididunt t-bone enim.
-
-Kielbasa enim officia ut veniam swine. Aliquip tempor ribeye, short ribs pariatur deserunt shankle hamburger prosciutto rump jowl ground round adipisicing ullamco corned beef. Cupidatat nostrud fatback ipsum. Nisi porchetta non nulla deserunt incididunt sunt tri-tip duis bacon eu doner swine ad shankle. Enim mollit tail, filet mignon jowl short ribs nisi tri-tip exercitation shankle chicken sirloin."
             android:textAppearance="?attr/textAppearanceListItem"
             android:lineHeight="24dp"
             app:layout_constraintTop_toBottomOf="@id/author_text_view"
@@ -62,7 +58,6 @@ Kielbasa enim officia ut veniam swine. Aliquip tempor ribeye, short ribs pariatu
             android:textColor="#80EAEAEA"
             android:fontFamily="@font/merriweather_sans"
             android:textSize="12sp"
-            android:text="3 hours ago"
             android:textAppearance="?attr/textAppearanceListItem"
             app:layout_constraintStart_toEndOf="@id/time_icon"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -76,7 +71,6 @@ Kielbasa enim officia ut veniam swine. Aliquip tempor ribeye, short ribs pariatu
             android:fontFamily="@font/merriweather_sans"
             android:textSize="12sp"
             android:textAllCaps="true"
-            android:text="3 Replies"
             android:textAppearance="?attr/textAppearanceListItem"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

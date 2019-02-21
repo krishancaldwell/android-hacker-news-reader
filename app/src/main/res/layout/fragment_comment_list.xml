@@ -13,7 +13,6 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/merriweather_sans"
-        android:text="8 comments"
         android:textAllCaps="true"
         android:textColor="@color/color_primary_dark_alternate"
         android:textStyle="bold"
@@ -38,5 +37,23 @@
         app:layout_constraintTop_toBottomOf="@id/comment_count_text_view"
         tools:context=".ui.CommentListFragment"
         tools:listitem="@layout/item_comment" />
+
+    <View
+        android:id="@+id/loading_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC000000" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:lottie_rawRes="@raw/loader"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
