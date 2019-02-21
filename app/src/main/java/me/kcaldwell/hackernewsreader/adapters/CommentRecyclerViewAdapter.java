@@ -3,6 +3,7 @@ package me.kcaldwell.hackernewsreader.adapters;
 import android.app.ActionBar;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import io.realm.RealmRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.Comment;
 import me.kcaldwell.hackernewsreader.ui.CommentListFragment.OnListFragmentInteractionListener;
+import me.saket.bettermovementmethod.BetterLinkMovementMethod;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Comment} and makes a call to the
@@ -66,6 +68,9 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
                 mListener.onListFragmentInteraction(holder.mComment);
             }
         });
+
+        // Linkify any links shared in the article
+        BetterLinkMovementMethod.linkify(Linkify.ALL, holder.mContentView);
 
         if (position == getItemCount() - 1) holder.mDivider.setVisibility(View.INVISIBLE);
     }
