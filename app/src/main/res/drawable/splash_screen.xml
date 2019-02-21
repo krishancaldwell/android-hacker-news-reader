@@ -2,7 +2,7 @@
     <item android:drawable="@color/color_primary_dark"/>
     <item>
         <bitmap
-            android:src="@drawable/icon_144"
+            android:src="@drawable/icon"
             android:gravity="center"/>
     </item>
 </layer-list>
