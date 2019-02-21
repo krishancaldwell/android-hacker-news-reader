@@ -36,7 +36,7 @@ public class ArticleFragment extends Fragment {
     private OnArticleBookmarkListener mListener;
 
     private ProgressBar mProgressBar;
-    private WebView mWebview;
+    protected WebView mWebview;
 
     public ArticleFragment() {
         // Required empty public constructor

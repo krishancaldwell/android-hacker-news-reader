@@ -106,9 +106,17 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
 
     @Override
     public void onBackPressed() {
-        mToolbar.setVisibility(View.VISIBLE);
-        mTitleTextView.setText(getString(R.string.main_title));
-        super.onBackPressed();
+        Fragment currentFragment = mFragmentManager.findFragmentByTag("webview");
+        if (currentFragment instanceof ArticleFragment) {
+            if (((ArticleFragment)currentFragment).mWebview.canGoBack()) {
+                ((ArticleFragment)currentFragment).mWebview.goBack();
+            }
+            else {
+                mToolbar.setVisibility(View.VISIBLE);
+                mTitleTextView.setText(getString(R.string.main_title));
+                super.onBackPressed();
+            }
+        }
     }
 
     @Override
