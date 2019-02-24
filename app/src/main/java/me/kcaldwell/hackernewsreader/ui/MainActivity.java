@@ -11,12 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import me.kcaldwell.hackernewsreader.R;
-import me.kcaldwell.hackernewsreader.data.Comment;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
-import me.kcaldwell.hackernewsreader.ui.ArticleFragment.OnArticleBookmarkListener;
+import me.kcaldwell.hackernewsreader.ui.WebviewFragment.OnArticleBookmarkListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleCommentsSelectedListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
-import me.kcaldwell.hackernewsreader.ui.CommentListFragment.OnListFragmentInteractionListener;
 
 /**
  * MainActivity of the app. Displays a list of articles pulled from the HackerNews API
@@ -24,7 +22,7 @@ import me.kcaldwell.hackernewsreader.ui.CommentListFragment.OnListFragmentIntera
 public class MainActivity extends AppCompatActivity implements OnArticleSelectedListener,
                                                                OnArticleBookmarkListener,
                                                                OnArticleCommentsSelectedListener,
-                                                               OnListFragmentInteractionListener {
+        CommentListFragment.OnCommentInteractionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -59,9 +57,14 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     }
 
     private void navigateToArticleFragment(String title, String url) {
-        mTitleTextView.setText(title);
+        if (title != null) {
+            mTitleTextView.setText(title);
+        }
+        else {
+            mToolbar.setVisibility(View.GONE);
+        }
 
-        Fragment fragment = new ArticleFragment();
+        Fragment fragment = new WebviewFragment();
 
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
@@ -107,9 +110,9 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     @Override
     public void onBackPressed() {
         Fragment currentFragment = mFragmentManager.findFragmentByTag("webview");
-        if (currentFragment instanceof ArticleFragment) {
-            if (((ArticleFragment)currentFragment).mWebview.canGoBack()) {
-                ((ArticleFragment)currentFragment).mWebview.goBack();
+        if (currentFragment instanceof WebviewFragment) {
+            if (((WebviewFragment)currentFragment).mWebview.canGoBack()) {
+                ((WebviewFragment)currentFragment).mWebview.goBack();
             }
             else {
                 mToolbar.setVisibility(View.VISIBLE);
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     }
 
     @Override
-    public void onListFragmentInteraction(Comment comment) {
-
+    public void onCommentUrlClicked(String url) {
+        navigateToArticleFragment(null, url);
     }
 }

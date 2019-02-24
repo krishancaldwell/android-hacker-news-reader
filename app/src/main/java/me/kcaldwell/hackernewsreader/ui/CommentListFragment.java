@@ -2,6 +2,7 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,16 +28,17 @@ import me.kcaldwell.hackernewsreader.data.CommentDao;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnCommentInteractionListener}
  * interface.
  */
 public class CommentListFragment extends Fragment {
 
-    public static final String TAG = CommentListFragment.class.getSimpleName();
+    private static final String TAG = CommentListFragment.class.getSimpleName();
 
     private Realm mRealm;
     private String mArticleId;
     private RealmResults<Comment> mComments;
+    private Parcelable mRecyclerViewState;
 
     private TextView mCommentCountTextView;
     private RecyclerView mRecyclerView;
@@ -44,7 +46,7 @@ public class CommentListFragment extends Fragment {
     private View mLoadingView;
     private LottieAnimationView mAnimationView;
 
-    private OnListFragmentInteractionListener mListener;
+    private OnCommentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -87,21 +89,22 @@ public class CommentListFragment extends Fragment {
         }
         mCommentCountTextView.setText(commentsString);
 
-        setAdapter();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
+        mRecyclerView.setAdapter(mAdapter);
 
         getComments();
 
         return rootView;
     }
 
-    private void setAdapter() {
-        if (mAdapter == null) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
-            mRecyclerView.setAdapter(mAdapter);
-        } else {
-            mAdapter.notifyDataSetChanged();
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // Save the state of the recycler view so the scroll position can be preserved
+        mRecyclerViewState = mRecyclerView.getLayoutManager().onSaveInstanceState();
     }
 
     @Override
@@ -131,21 +134,36 @@ public class CommentListFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    setAdapter();
+                    refreshAdapterArticles();
+                    scrollToPositionIfSet();
                     toggleProgressViews(false);
                 }),
                 () -> Log.e(TAG, "An error occurred with the API call"));
     }
 
+    private void refreshAdapterArticles() {
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void scrollToPositionIfSet() {
+        if (mRecyclerViewState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerViewState);
+        }
+        else {
+            Log.i(TAG, "State was null");
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnCommentInteractionListener) {
+            mListener = (OnCommentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnCommentInteractionListener");
         }
     }
 
@@ -165,8 +183,7 @@ public class CommentListFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(Comment comment);
+    public interface OnCommentInteractionListener {
+        void onCommentUrlClicked(String url);
     }
 }

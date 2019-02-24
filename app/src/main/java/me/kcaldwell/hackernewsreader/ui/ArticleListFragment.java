@@ -160,7 +160,7 @@ public class ArticleListFragment extends Fragment {
         News.get(getActivity(), mPage, response -> {
             FeedItemDao.createOrUpdateFeedItemsFromArray(response, mRealm);
             refreshAdapterArticles();
-            scrollToPositionifSet();
+            scrollToPositionIfSet();
             toggleProgressViews(false);
 
         }, () -> {
@@ -170,7 +170,7 @@ public class ArticleListFragment extends Fragment {
         });
     }
 
-    private void scrollToPositionifSet() {
+    private void scrollToPositionIfSet() {
         if (mRecyclerViewState != null) {
             mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerViewState);
         }

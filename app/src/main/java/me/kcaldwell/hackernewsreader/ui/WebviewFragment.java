@@ -1,10 +1,10 @@
 package me.kcaldwell.hackernewsreader.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +13,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import androidx.fragment.app.Fragment;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
 
@@ -23,10 +24,9 @@ import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
  * {@link OnArticleBookmarkListener} interface
  * to handle interaction events.
  */
-public class ArticleFragment extends Fragment {
+public class WebviewFragment extends Fragment {
     private static final String ARG_URL = "url";
 
-    // TODO: Rename and change types of parameters
     private String mURL;
 
     private OnArticleBookmarkListener mListener;
@@ -34,7 +34,7 @@ public class ArticleFragment extends Fragment {
     private ProgressBar mProgressBar;
     WebView mWebview;
 
-    public ArticleFragment() {
+    public WebviewFragment() {
         // Required empty public constructor
     }
 
@@ -46,6 +46,7 @@ public class ArticleFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -132,10 +133,6 @@ public class ArticleFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnArticleBookmarkListener {
         void onArticleBookmarked(Uri uri);

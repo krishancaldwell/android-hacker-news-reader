@@ -1,7 +1,6 @@
 package me.kcaldwell.hackernewsreader.adapters;
 
 import android.app.ActionBar;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -10,23 +9,23 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.Comment;
-import me.kcaldwell.hackernewsreader.ui.CommentListFragment.OnListFragmentInteractionListener;
+import me.kcaldwell.hackernewsreader.ui.CommentListFragment.OnCommentInteractionListener;
 import me.saket.bettermovementmethod.BetterLinkMovementMethod;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Comment} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ * specified {@link OnCommentInteractionListener}.
  */
 public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment, CommentRecyclerViewAdapter.ViewHolder> {
 
-    private final OnListFragmentInteractionListener mListener;
+    private final OnCommentInteractionListener mListener;
 
-    public CommentRecyclerViewAdapter(OrderedRealmCollection<Comment> data, OnListFragmentInteractionListener listener) {
+    public CommentRecyclerViewAdapter(OrderedRealmCollection<Comment> data, OnCommentInteractionListener listener) {
         super(data, true);
         mListener = listener;
         setHasStableIds(true);
@@ -52,25 +51,25 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
         String commentsString;
         if (commentsCount == 0) {
             commentsString = "No replies";
-        }
-        else if (commentsCount == 1) {
+        } else if (commentsCount == 1) {
             commentsString = "1 reply";
-        }
-        else {
+        } else {
             commentsString = commentsCount + " replies";
         }
         holder.mRepliesTextView.setText(commentsString);
 
         holder.mView.setOnClickListener(v -> {
-            if (null != mListener) {
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an comment has been selected.
-                mListener.onListFragmentInteraction(holder.mComment);
-            }
+            // TODO: Update to collapse child comments.
         });
 
         // Linkify any links shared in the article
-        BetterLinkMovementMethod.linkify(Linkify.ALL, holder.mContentView);
+        BetterLinkMovementMethod.linkify(Linkify.ALL, holder.mContentView).setOnLinkClickListener(new BetterLinkMovementMethod.OnLinkClickListener() {
+            @Override
+            public boolean onClick(TextView textView, String url) {
+                mListener.onCommentUrlClicked(url);
+                return true;
+            }
+        });
 
         if (position == getItemCount() - 1) holder.mDivider.setVisibility(View.INVISIBLE);
     }
