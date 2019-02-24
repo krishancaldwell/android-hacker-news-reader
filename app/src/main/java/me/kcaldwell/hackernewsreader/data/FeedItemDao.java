@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class FeedItemDao {
 
@@ -38,6 +39,23 @@ public class FeedItemDao {
                 }
             }
         });
+    }
+
+    public static RealmResults<FeedItem> getAllFeedItems(Realm realmInstance) {
+        return realmInstance.where(FeedItem.class).findAll();
+    }
+
+    public static void removeStaleFeedItems(Realm realmInstance) {
+        long oneHourAgo = 3600000L;
+        long now = System.currentTimeMillis();
+        long yesterday = now - oneHourAgo;
+
+        RealmResults<FeedItem> staleItems = realmInstance.where(FeedItem.class)
+                .lessThan("time", yesterday)
+                .findAll();
+        if (staleItems.size() > 0) {
+            realmInstance.executeTransaction(realm -> staleItems.deleteAllFromRealm());
+        }
     }
 
 }

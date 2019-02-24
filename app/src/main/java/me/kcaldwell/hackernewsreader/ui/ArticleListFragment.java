@@ -77,8 +77,8 @@ public class ArticleListFragment extends Fragment {
 
         mRealm = Realm.getDefaultInstance();
 
-        // Remove stale data from local DB
-        removeStaleDataFromRealm();
+        // Remove old data from local DB
+        FeedItemDao.removeStaleFeedItems(mRealm);
 
         // Fetch current data
         getArticles();
@@ -87,12 +87,19 @@ public class ArticleListFragment extends Fragment {
         Context context = rootView.getContext();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
 
-        RealmResults<FeedItem> articles = mRealm.where(FeedItem.class).findAll();
+        RealmResults<FeedItem> articles = FeedItemDao.getAllFeedItems(mRealm);
 
         recyclerView.setLayoutManager(linearLayoutManager);
         mAdapter = new ArticleRecyclerViewAdapter(articles, mArticleListener, mCommentsListener);
         recyclerView.setAdapter(mAdapter);
 
+        setInfiniteScrollingSettings(recyclerView, linearLayoutManager);
+
+
+        return rootView;
+    }
+
+    private void setInfiniteScrollingSettings(RecyclerView recyclerView, LinearLayoutManager linearLayoutManager) {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -118,22 +125,6 @@ public class ArticleListFragment extends Fragment {
                 }
             }
         });
-
-
-        return rootView;
-    }
-
-    private void removeStaleDataFromRealm() {
-        long oneHourAgo = 3600000L;
-        long now = System.currentTimeMillis();
-        long yesterday = now - oneHourAgo;
-
-        RealmResults<FeedItem> staleItems = mRealm.where(FeedItem.class)
-                .lessThan("time", yesterday)
-                .findAll();
-        if (staleItems.size() > 0) {
-            mRealm.executeTransaction(realm -> staleItems.deleteAllFromRealm());
-        }
     }
 
 
