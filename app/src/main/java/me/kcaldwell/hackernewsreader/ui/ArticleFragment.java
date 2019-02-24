@@ -22,12 +22,8 @@ import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
  * Activities that contain this fragment must implement the
  * {@link OnArticleBookmarkListener} interface
  * to handle interaction events.
- * Use the {@link ArticleFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class ArticleFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_URL = "url";
 
     // TODO: Rename and change types of parameters
@@ -36,26 +32,10 @@ public class ArticleFragment extends Fragment {
     private OnArticleBookmarkListener mListener;
 
     private ProgressBar mProgressBar;
-    protected WebView mWebview;
+    WebView mWebview;
 
     public ArticleFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment ArticleFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ArticleFragment newInstance(String param1) {
-        ArticleFragment fragment = new ArticleFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_URL, param1);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override

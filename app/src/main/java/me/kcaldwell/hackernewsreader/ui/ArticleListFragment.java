@@ -24,6 +24,7 @@ import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.adapters.ArticleRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.News;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
+import me.kcaldwell.hackernewsreader.data.FeedItemDao;
 
 /**
  * A fragment representing a list of Items.
@@ -76,17 +77,8 @@ public class ArticleListFragment extends Fragment {
 
         mRealm = Realm.getDefaultInstance();
 
-        // Remove stale data from Realm
-        long oneHourAgo = 3600000L;
-        long now = System.currentTimeMillis();
-        long yesterday = now - oneHourAgo;
-
-        RealmResults<FeedItem> staleItems = mRealm.where(FeedItem.class)
-                .lessThan("time", yesterday)
-                .findAll();
-        if (staleItems.size() > 0) {
-            mRealm.executeTransaction(realm -> staleItems.deleteAllFromRealm());
-        }
+        // Remove stale data from local DB
+        removeStaleDataFromRealm();
 
         // Fetch current data
         getArticles();
@@ -131,6 +123,19 @@ public class ArticleListFragment extends Fragment {
         return rootView;
     }
 
+    private void removeStaleDataFromRealm() {
+        long oneHourAgo = 3600000L;
+        long now = System.currentTimeMillis();
+        long yesterday = now - oneHourAgo;
+
+        RealmResults<FeedItem> staleItems = mRealm.where(FeedItem.class)
+                .lessThan("time", yesterday)
+                .findAll();
+        if (staleItems.size() > 0) {
+            mRealm.executeTransaction(realm -> staleItems.deleteAllFromRealm());
+        }
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -166,37 +171,9 @@ public class ArticleListFragment extends Fragment {
     // Get articles
     private void getArticles() {
         toggleProgressViews(true);
-        News.get(getActivity(), mPage, response -> {
-            final FeedItem feedItem = new FeedItem();
-            mRealm.executeTransaction(realm -> {
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        JSONObject article = response.getJSONObject(i);
-                        feedItem.setId(article.getLong("id"));
-                        feedItem.setTitle(article.getString("title"));
-                        if (!article.isNull("points") && article.has("points")) {
-                            feedItem.setPoints(article.getInt("points"));
-                        }
-                        if (!article.isNull("user") && article.has("user")) {
-                            feedItem.setAuthor(article.getString("user"));
-                        }
-                        feedItem.setTime(article.getLong("time"));
-                        feedItem.setTimeAgo(article.getString("time_ago"));
-                        feedItem.setCommentsCount(article.getInt("comments_count"));
-                        feedItem.setType(article.getString("type"));
-                        if (!article.isNull("url") && article.has("url")) {
-                            feedItem.setUrl(article.getString("url"));
-                        }
-                        if (!article.isNull("domain") && article.has("domain")) {
-                            feedItem.setDomain(article.getString("domain"));
-                        }
-                        mRealm.copyToRealmOrUpdate(feedItem);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
 
+        News.get(getActivity(), mPage, response -> {
+            FeedItemDao.createFeedItemsFromArray(response, mRealm);
             refreshArticles();
             toggleProgressViews(false);
 
