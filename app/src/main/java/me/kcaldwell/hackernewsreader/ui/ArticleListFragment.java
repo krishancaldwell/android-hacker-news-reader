@@ -2,6 +2,7 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +35,7 @@ public class ArticleListFragment extends Fragment {
     private static final String TAG = ArticleListFragment.class.getSimpleName();
 
     private Realm mRealm;
+    private RecyclerView mRecyclerView;
     private ArticleRecyclerViewAdapter mAdapter;
     private View mLoadingView;
     private LottieAnimationView mAnimationView;
@@ -40,7 +44,7 @@ public class ArticleListFragment extends Fragment {
     private boolean mLoading = true;
     private int mVisibleThreshold = 5;
     private int mPage = 1;
-    int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount;
+    private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount;
 
     private OnArticleSelectedListener mArticleListener;
     private OnArticleCommentsSelectedListener mCommentsListener;
@@ -52,15 +56,6 @@ public class ArticleListFragment extends Fragment {
     public ArticleListFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ArticleListFragment newInstance(int columnCount) {
-        ArticleListFragment fragment = new ArticleListFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,7 +63,7 @@ public class ArticleListFragment extends Fragment {
 
         mLoadingView = rootView.findViewById(R.id.loading_mask);
         mAnimationView = rootView.findViewById(R.id.animation_view);
-        RecyclerView recyclerView = rootView.findViewById(R.id.list);
+        mRecyclerView = rootView.findViewById(R.id.list);
 
         mRealm = Realm.getDefaultInstance();
 
@@ -80,48 +75,18 @@ public class ArticleListFragment extends Fragment {
 
         // Set the adapter
         Context context = rootView.getContext();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
 
         RealmResults<FeedItem> articles = FeedItemDao.getAllFeedItems(mRealm);
 
-        recyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ArticleRecyclerViewAdapter(articles, mArticleListener, mCommentsListener);
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
 
-        setInfiniteScrollingSettings(recyclerView, linearLayoutManager);
-
+        setInfiniteScrollingSettings(mLayoutManager);
 
         return rootView;
     }
-
-    private void setInfiniteScrollingSettings(RecyclerView recyclerView, LinearLayoutManager linearLayoutManager) {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0) { //check for downwards scrolling
-                    mVisibleItemCount = linearLayoutManager.getChildCount();
-                    mTotalItemCount = linearLayoutManager.getItemCount();
-                    mFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-
-                    if (mLoading) {
-                        if (mTotalItemCount > mPreviousTotal) {
-                            mLoading = false;
-                            mPreviousTotal = mTotalItemCount;
-                        }
-                    } else if ((mTotalItemCount - mVisibleItemCount) <= (mFirstVisibleItem + mVisibleThreshold)) {
-                        // End has been reached
-                        Log.i(TAG, "End of list reached");
-
-                        // Do something
-                        mLoading = true;
-                        mPage++;
-                        getArticles();
-                    }
-                }
-            }
-        });
-    }
-
 
     @Override
     public void onAttach(Context context) {
@@ -154,7 +119,34 @@ public class ArticleListFragment extends Fragment {
         }
     }
 
-    // Get articles
+    private void setInfiniteScrollingSettings(LinearLayoutManager linearLayoutManager) {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) { //check for downwards scrolling
+                    mVisibleItemCount = linearLayoutManager.getChildCount();
+                    mTotalItemCount = linearLayoutManager.getItemCount();
+                    mFirstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+
+                    if (mLoading) {
+                        if (mTotalItemCount > mPreviousTotal) {
+                            mLoading = false;
+                            mPreviousTotal = mTotalItemCount;
+                        }
+                    } else if ((mTotalItemCount - mVisibleItemCount) <= (mFirstVisibleItem + mVisibleThreshold)) {
+                        // End has been reached
+                        Log.i(TAG, "End of list reached");
+
+                        // Do something
+                        mLoading = true;
+                        mPage++;
+                        getArticles();
+                    }
+                }
+            }
+        });
+    }
+
     private void getArticles() {
         toggleProgressViews(true);
 
@@ -183,17 +175,10 @@ public class ArticleListFragment extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Interfaces for the Adapter to implement. This enables callbacks to be passed and appropriate
+     * action to be taken by the Activity.
      */
     public interface OnArticleSelectedListener {
-        // TODO: Update argument type and name
         void onArticleSelected(FeedItem feedItem);
     }
 

@@ -2,17 +2,17 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import me.kcaldwell.hackernewsreader.R;
-import me.kcaldwell.hackernewsreader.data.FeedItem;
 import me.kcaldwell.hackernewsreader.data.Comment;
+import me.kcaldwell.hackernewsreader.data.FeedItem;
 import me.kcaldwell.hackernewsreader.ui.ArticleFragment.OnArticleBookmarkListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleCommentsSelectedListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
