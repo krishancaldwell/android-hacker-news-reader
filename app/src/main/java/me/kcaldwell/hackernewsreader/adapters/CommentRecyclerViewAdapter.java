@@ -63,12 +63,9 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
         });
 
         // Linkify any links shared in the article
-        BetterLinkMovementMethod.linkify(Linkify.ALL, holder.mContentView).setOnLinkClickListener(new BetterLinkMovementMethod.OnLinkClickListener() {
-            @Override
-            public boolean onClick(TextView textView, String url) {
-                mListener.onCommentUrlClicked(url);
-                return true;
-            }
+        BetterLinkMovementMethod.linkify(Linkify.ALL, holder.mContentView).setOnLinkClickListener((textView, url) -> {
+            mListener.onCommentUrlClicked(url);
+            return true;
         });
 
         if (position == getItemCount() - 1) holder.mDivider.setVisibility(View.INVISIBLE);
@@ -89,15 +86,15 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mAuthorTextView;
-        public final TextView mContentView;
-        public final TextView mTimeTextView;
-        public final TextView mRepliesTextView;
-        public final View mDivider;
-        public Comment mComment;
+        final View mView;
+        final TextView mAuthorTextView;
+        final TextView mContentView;
+        final TextView mTimeTextView;
+        final TextView mRepliesTextView;
+        final View mDivider;
+        Comment mComment;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mAuthorTextView = view.findViewById(R.id.author_text_view);
