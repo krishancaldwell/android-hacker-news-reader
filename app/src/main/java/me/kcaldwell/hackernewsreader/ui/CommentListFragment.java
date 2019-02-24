@@ -24,6 +24,8 @@ import me.kcaldwell.hackernewsreader.adapters.CommentRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.Item;
 import me.kcaldwell.hackernewsreader.data.Comment;
 import me.kcaldwell.hackernewsreader.data.CommentDao;
+import me.kcaldwell.hackernewsreader.data.FeedItem;
+import me.kcaldwell.hackernewsreader.data.FeedItemDao;
 
 /**
  * A fragment representing a list of Items.
@@ -39,7 +41,11 @@ public class CommentListFragment extends Fragment {
     private RealmResults<Comment> mComments;
     private Parcelable mRecyclerViewState;
 
+    private TextView mTitleTextView;
+    private TextView mUrlTextView;
     private TextView mCommentCountTextView;
+    private TextView mAuthorTextView;
+    private TextView mTimeAgoTextView;
     private RecyclerView mRecyclerView;
     private CommentRecyclerViewAdapter mAdapter;
     private View mLoadingView;
@@ -70,13 +76,24 @@ public class CommentListFragment extends Fragment {
 
         mRealm = Realm.getDefaultInstance();
 
+        mTitleTextView = rootView.findViewById(R.id.title_text_view);
+        mUrlTextView = rootView.findViewById(R.id.url_text_view);
         mCommentCountTextView = rootView.findViewById(R.id.comment_count_text_view);
+        mAuthorTextView = rootView.findViewById(R.id.author_text_view);
+        mTimeAgoTextView = rootView.findViewById(R.id.time_text_view);
         mRecyclerView = rootView.findViewById(R.id.list);
         mLoadingView = rootView.findViewById(R.id.loading_mask);
         mAnimationView = rootView.findViewById(R.id.animation_view);
 
-        // Set the adapter
+        // Set View Data
         mComments = CommentDao.getAllComments(mRealm);
+        FeedItem article = FeedItemDao.getFeedItemById(Long.valueOf(mArticleId), mRealm);
+
+        mTitleTextView.setText(article.getTitle());
+        mUrlTextView.setText(article.getUrl());
+        mAuthorTextView.setText(article.getAuthor());
+        mTimeAgoTextView.setText(String.format("Posted %s", article.getTimeAgo()));
+
         int commentsCount = mComments.size();
         String commentsString;
         if (commentsCount == 0) {
@@ -87,11 +104,6 @@ public class CommentListFragment extends Fragment {
             commentsString = commentsCount + " comments";
         }
         mCommentCountTextView.setText(commentsString);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(rootView.getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
-        mRecyclerView.setAdapter(mAdapter);
 
         getComments();
 
@@ -141,9 +153,11 @@ public class CommentListFragment extends Fragment {
     }
 
     private void refreshAdapterArticles() {
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
-        }
+        // Set the adapter
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void scrollToPositionIfSet() {

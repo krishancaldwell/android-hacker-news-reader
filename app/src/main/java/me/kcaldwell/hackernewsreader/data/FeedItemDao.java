@@ -41,6 +41,10 @@ public class FeedItemDao {
         });
     }
 
+    public static FeedItem getFeedItemById(long id, Realm realmInstance) {
+        return realmInstance.where(FeedItem.class).equalTo("id", id).findFirst();
+    }
+
     public static RealmResults<FeedItem> getAllFeedItems(Realm realmInstance) {
         return realmInstance.where(FeedItem.class).findAll();
     }
