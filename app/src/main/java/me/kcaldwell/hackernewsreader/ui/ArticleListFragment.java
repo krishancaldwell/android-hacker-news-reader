@@ -2,11 +2,6 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +10,9 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import me.kcaldwell.hackernewsreader.R;
@@ -164,7 +159,7 @@ public class ArticleListFragment extends Fragment {
         toggleProgressViews(true);
 
         News.get(getActivity(), mPage, response -> {
-            FeedItemDao.createFeedItemsFromArray(response, mRealm);
+            FeedItemDao.createOrUpdateFeedItemsFromArray(response, mRealm);
             refreshArticles();
             toggleProgressViews(false);
 

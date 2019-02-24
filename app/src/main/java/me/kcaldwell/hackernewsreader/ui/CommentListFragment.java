@@ -2,9 +2,6 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +12,17 @@ import com.airbnb.lottie.LottieAnimationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import javax.annotation.Nullable;
-
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.adapters.CommentRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.api.Item;
 import me.kcaldwell.hackernewsreader.data.Comment;
+import me.kcaldwell.hackernewsreader.data.CommentDao;
 
 /**
  * A fragment representing a list of Items.
@@ -77,17 +75,14 @@ public class CommentListFragment extends Fragment {
         mAnimationView = rootView.findViewById(R.id.animation_view);
 
         // Set the adapter
-        mComments = mRealm.where(Comment.class).findAll();
-
+        mComments = CommentDao.getAllComments(mRealm);
         int commentsCount = mComments.size();
         String commentsString;
         if (commentsCount == 0) {
             commentsString = "No comments";
-        }
-        else if (commentsCount == 1) {
+        } else if (commentsCount == 1) {
             commentsString = "1 comment";
-        }
-        else {
+        } else {
             commentsString = commentsCount + " comments";
         }
         mCommentCountTextView.setText(commentsString);
@@ -104,8 +99,7 @@ public class CommentListFragment extends Fragment {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
             mRecyclerView.setAdapter(mAdapter);
-        }
-        else {
+        } else {
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -126,70 +120,21 @@ public class CommentListFragment extends Fragment {
 
     private void getComments() {
         toggleProgressViews(true);
-        RealmResults<Comment> oldComments = mRealm.where(Comment.class).findAll();
-        mRealm.executeTransaction(realm -> oldComments.deleteAllFromRealm());
+        CommentDao.removeAllComments(mRealm);
         Item.get(getActivity(), mArticleId, (response) -> mRealm.executeTransaction(realm -> {
-            JSONArray comments;
-            try {
-                comments = response.getJSONArray("comments");
-                addCommentToRealm(realm, comments, null);
-            }
-            catch (JSONException e) {
-                Log.e(TAG, "JSON Exception: " + e.getMessage());
-                e.printStackTrace();
-            }
-
-            setAdapter();
-            toggleProgressViews(false);
-        }),
-                () -> Log.e(TAG, "An error occurred with the API call"));
-    }
-
-    private void addCommentToRealm(Realm realm, JSONArray comments, @Nullable Long parentId) {
-        final Comment comment = new Comment();
-        for (int i = 0; i < comments.length(); i++) {
-            try {
-                JSONObject jsonObject = comments.getJSONObject(i);
-
-                comment.setId(jsonObject.getLong("id"));
-                if(jsonObject.has("user")) {
-                    comment.setAuthor(jsonObject.getString("user"));
-                }
-                else {
-                    comment.setAuthor("Deleted User");
-                }
-                comment.setTime(jsonObject.getLong("time"));
-                comment.setTimeAgo(jsonObject.getString("time_ago"));
-                comment.setContent(jsonObject.getString("content"));
-                comment.setType(jsonObject.getString("type"));
-                comment.setUrl(jsonObject.getString("url"));
-                comment.setCommentsCount(jsonObject.getInt("comments_count"));
-                if (jsonObject.has("level")) {
-                    comment.setLevel(jsonObject.getInt("level"));
-                }
-                realm.copyToRealmOrUpdate(comment);
-
-                if (parentId != null) {
-                    Comment parent = realm.where(Comment.class).equalTo("id", parentId).findFirst();
-                    if (parent == null) {
-                        return;
+                    JSONArray comments;
+                    try {
+                        comments = response.getJSONArray("comments");
+                        CommentDao.createCommentsFromArray(comments, realm, null);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "JSON Exception: " + e.getMessage());
+                        e.printStackTrace();
                     }
 
-                    parent.getComments().add(comment);
-                    realm.copyToRealmOrUpdate(parent);
-                }
-
-                JSONArray childComments = jsonObject.getJSONArray("comments");
-                if (comments.length() > 0) {
-                    addCommentToRealm(realm, childComments, comment.getId());
-                }
-            }
-            catch (JSONException e) {
-                Log.e(TAG, "JSON Exception: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-
+                    setAdapter();
+                    toggleProgressViews(false);
+                }),
+                () -> Log.e(TAG, "An error occurred with the API call"));
     }
 
 

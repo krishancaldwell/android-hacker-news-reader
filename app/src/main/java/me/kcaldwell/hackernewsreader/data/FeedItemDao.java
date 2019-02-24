@@ -9,7 +9,7 @@ import io.realm.RealmResults;
 
 public class FeedItemDao {
 
-    public static void createFeedItemsFromArray(JSONArray feed, Realm realmInstance) {
+    public static void createOrUpdateFeedItemsFromArray(JSONArray feed, Realm realmInstance) {
         final FeedItem feedItem = new FeedItem();
         realmInstance.executeTransaction(realm -> {
             for (int i = 0; i < feed.length(); i++) {
