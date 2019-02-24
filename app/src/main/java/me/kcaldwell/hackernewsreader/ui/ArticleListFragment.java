@@ -11,8 +11,6 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +38,7 @@ public class ArticleListFragment extends Fragment {
     private View mLoadingView;
     private LottieAnimationView mAnimationView;
 
+    private Parcelable mRecyclerViewState;
     private int mPreviousTotal = 0;
     private boolean mLoading = true;
     private int mVisibleThreshold = 5;
@@ -75,15 +74,15 @@ public class ArticleListFragment extends Fragment {
 
         // Set the adapter
         Context context = rootView.getContext();
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
 
         RealmResults<FeedItem> articles = FeedItemDao.getAllFeedItems(mRealm);
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new ArticleRecyclerViewAdapter(articles, mArticleListener, mCommentsListener);
         mRecyclerView.setAdapter(mAdapter);
 
-        setInfiniteScrollingSettings(mLayoutManager);
+        setInfiniteScrollingSettings(layoutManager);
 
         return rootView;
     }
@@ -102,6 +101,14 @@ public class ArticleListFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString() + " must implement OnArticleCommentsSelectedListener");
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // Save the state of the recycler view so the scroll position can be preserved
+        mRecyclerViewState = mRecyclerView.getLayoutManager().onSaveInstanceState();
     }
 
     @Override
@@ -152,7 +159,8 @@ public class ArticleListFragment extends Fragment {
 
         News.get(getActivity(), mPage, response -> {
             FeedItemDao.createOrUpdateFeedItemsFromArray(response, mRealm);
-            refreshArticles();
+            refreshAdapterArticles();
+            scrollToPositionifSet();
             toggleProgressViews(false);
 
         }, () -> {
@@ -162,13 +170,22 @@ public class ArticleListFragment extends Fragment {
         });
     }
 
+    private void scrollToPositionifSet() {
+        if (mRecyclerViewState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerViewState);
+        }
+        else {
+            Log.i(TAG, "State was null");
+        }
+    }
+
     private void toggleProgressViews(boolean show) {
         int visible = show ? View.VISIBLE : View.GONE;
         mLoadingView.setVisibility(visible);
         mAnimationView.setVisibility(visible);
     }
 
-    private void refreshArticles() {
+    private void refreshAdapterArticles() {
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
