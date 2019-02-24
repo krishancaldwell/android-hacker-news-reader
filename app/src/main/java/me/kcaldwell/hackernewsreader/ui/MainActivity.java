@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -22,6 +24,7 @@ import me.kcaldwell.hackernewsreader.ui.WebviewFragment.OnArticleBookmarkListene
 public class MainActivity extends AppCompatActivity implements OnArticleSelectedListener,
         OnArticleBookmarkListener,
         OnArticleCommentsSelectedListener,
+        ArticleListFragment.OnArticlesLoadingListener,
         CommentListFragment.OnCommentInteractionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     private FragmentManager mFragmentManager;
 
     private Toolbar mToolbar;
+    private LottieAnimationView mAnimationView;
     private TextView mTitleTextView;
 
     @Override
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
 
+        mAnimationView = findViewById(R.id.animation_view);
         mTitleTextView = findViewById(R.id.title_text_view);
 
         mFragmentManager = getSupportFragmentManager();
@@ -132,6 +137,12 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     @Override
     public void onCommentsSelected(FeedItem item) {
         navigateToArticleComments(item.getId());
+    }
+
+    @Override
+    public void onArticlesLoading(boolean show) {
+        int visibility = show ? View.VISIBLE : View.GONE;
+        mAnimationView.setVisibility(visibility);
     }
 
     @Override

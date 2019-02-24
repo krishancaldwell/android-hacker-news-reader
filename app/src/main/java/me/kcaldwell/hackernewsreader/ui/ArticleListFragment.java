@@ -47,6 +47,7 @@ public class ArticleListFragment extends Fragment {
 
     private OnArticleSelectedListener mArticleListener;
     private OnArticleCommentsSelectedListener mCommentsListener;
+    private OnArticlesLoadingListener mLoadingListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -99,7 +100,14 @@ public class ArticleListFragment extends Fragment {
         if (context instanceof OnArticleCommentsSelectedListener) {
             mCommentsListener = (OnArticleCommentsSelectedListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement OnArticleCommentsSelectedListener");
+            throw new RuntimeException(context.toString()
+                    + " must implement OnArticleCommentsSelectedListener");
+        }
+        if (context instanceof OnArticlesLoadingListener) {
+            mLoadingListener = (OnArticlesLoadingListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnArticlesLoadingListener");
         }
     }
 
@@ -116,6 +124,7 @@ public class ArticleListFragment extends Fragment {
         super.onDetach();
         mArticleListener = null;
         mCommentsListener = null;
+        mLoadingListener = null;
     }
 
     @Override
@@ -162,10 +171,9 @@ public class ArticleListFragment extends Fragment {
             refreshAdapterArticles();
             scrollToPositionIfSet();
             toggleProgressViews(false);
-
         }, () -> {
             Log.e(TAG, "An error occurred");
-
+            toggleProgressViews(false);
             Toast.makeText(getActivity(), "There was an error updating the stories", Toast.LENGTH_LONG).show();
         });
     }
@@ -179,9 +187,14 @@ public class ArticleListFragment extends Fragment {
     }
 
     private void toggleProgressViews(boolean show) {
-        int visible = show ? View.VISIBLE : View.GONE;
-        mLoadingView.setVisibility(visible);
-        mAnimationView.setVisibility(visible);
+        if (mPage < 2) {
+            int visible = show ? View.VISIBLE : View.GONE;
+            mLoadingView.setVisibility(visible);
+            mAnimationView.setVisibility(visible);
+        }
+        else {
+            mLoadingListener.onArticlesLoading(show);
+        }
     }
 
     private void refreshAdapterArticles() {
@@ -200,5 +213,9 @@ public class ArticleListFragment extends Fragment {
 
     public interface OnArticleCommentsSelectedListener {
         void onCommentsSelected(FeedItem feedItem);
+    }
+
+    public interface OnArticlesLoadingListener {
+        void onArticlesLoading(boolean show);
     }
 }
