@@ -9,3 +9,4 @@ As published on their Github page, using the official Hacker News API does not h
 * Improve UI
 * Add bookmarks
 * Add further pages (ie Jobs, Ask, etc)
+* Switch datasource to the original Hacker News source since there appears to be some time delay
