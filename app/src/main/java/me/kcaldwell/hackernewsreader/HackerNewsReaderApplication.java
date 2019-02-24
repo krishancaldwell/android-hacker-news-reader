@@ -13,9 +13,9 @@ public class HackerNewsReaderApplication extends Application {
         Realm.init(this);
         Realm.setDefaultConfiguration(
                 new RealmConfiguration.Builder()
-                    .name("HackerNewsReader.realm")
-                    .deleteRealmIfMigrationNeeded()
-                    .build()
+                        .name("HackerNewsReader.realm")
+                        .deleteRealmIfMigrationNeeded()
+                        .build()
         );
     }
 }

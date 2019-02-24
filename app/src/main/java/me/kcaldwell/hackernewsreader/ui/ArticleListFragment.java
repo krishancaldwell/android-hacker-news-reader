@@ -173,8 +173,7 @@ public class ArticleListFragment extends Fragment {
     private void scrollToPositionIfSet() {
         if (mRecyclerViewState != null) {
             mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerViewState);
-        }
-        else {
+        } else {
             Log.i(TAG, "State was null");
         }
     }

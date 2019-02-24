@@ -5,7 +5,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class FeedItem extends RealmObject {
 
-    private @PrimaryKey long id;
+    private @PrimaryKey
+    long id;
     private String title;
     private Integer points;
     private String author;

@@ -27,7 +27,6 @@ import me.kcaldwell.hackernewsreader.data.CommentDao;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
  * Activities containing this fragment MUST implement the {@link OnCommentInteractionListener}
  * interface.
  */
@@ -150,8 +149,7 @@ public class CommentListFragment extends Fragment {
     private void scrollToPositionIfSet() {
         if (mRecyclerViewState != null) {
             mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerViewState);
-        }
-        else {
+        } else {
             Log.i(TAG, "State was null");
         }
     }

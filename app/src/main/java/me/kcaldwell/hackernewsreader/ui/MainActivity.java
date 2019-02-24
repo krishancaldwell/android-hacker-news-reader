@@ -12,16 +12,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
-import me.kcaldwell.hackernewsreader.ui.WebviewFragment.OnArticleBookmarkListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleCommentsSelectedListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
+import me.kcaldwell.hackernewsreader.ui.WebviewFragment.OnArticleBookmarkListener;
 
 /**
  * MainActivity of the app. Displays a list of articles pulled from the HackerNews API
  */
 public class MainActivity extends AppCompatActivity implements OnArticleSelectedListener,
-                                                               OnArticleBookmarkListener,
-                                                               OnArticleCommentsSelectedListener,
+        OnArticleBookmarkListener,
+        OnArticleCommentsSelectedListener,
         CommentListFragment.OnCommentInteractionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     private void navigateToArticleFragment(String title, String url) {
         if (title != null) {
             mTitleTextView.setText(title);
-        }
-        else {
+        } else {
             mToolbar.setVisibility(View.GONE);
         }
 
@@ -111,16 +110,14 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
     public void onBackPressed() {
         Fragment currentFragment = mFragmentManager.findFragmentByTag("webview");
         if (currentFragment instanceof WebviewFragment) {
-            if (((WebviewFragment)currentFragment).mWebview.canGoBack()) {
-                ((WebviewFragment)currentFragment).mWebview.goBack();
-            }
-            else {
+            if (((WebviewFragment) currentFragment).mWebview.canGoBack()) {
+                ((WebviewFragment) currentFragment).mWebview.goBack();
+            } else {
                 mToolbar.setVisibility(View.VISIBLE);
                 mTitleTextView.setText(getString(R.string.main_title));
                 super.onBackPressed();
             }
-        }
-        else {
+        } else {
             mToolbar.setVisibility(View.VISIBLE);
             mTitleTextView.setText(getString(R.string.main_title));
             super.onBackPressed();

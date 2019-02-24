@@ -79,10 +79,10 @@ public class API {
     }
 
     static void getObject(final Context context,
-                    final String url,
-                    final String tag,
-                    final ResponseObjectCallback responseListener,
-                    final ErrorCallback errorListener) {
+                          final String url,
+                          final String tag,
+                          final ResponseObjectCallback responseListener,
+                          final ErrorCallback errorListener) {
 
         // create request
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,

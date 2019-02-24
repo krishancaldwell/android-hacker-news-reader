@@ -52,8 +52,7 @@ public class CommentDao {
                 if (comments.length() > 0) {
                     createCommentsFromArray(childComments, realmInstance, comment.getId());
                 }
-            }
-            catch (JSONException e) {
+            } catch (JSONException e) {
                 Log.e(TAG, "JSON Exception: " + e.getMessage());
                 e.printStackTrace();
             }

@@ -6,7 +6,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class Comment extends RealmObject {
 
-    private @PrimaryKey long id;
+    private @PrimaryKey
+    long id;
     private String author;
     private long time;
     private String timeAgo;

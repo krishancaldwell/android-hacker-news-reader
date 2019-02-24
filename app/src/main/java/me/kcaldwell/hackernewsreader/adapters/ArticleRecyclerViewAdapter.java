@@ -1,19 +1,19 @@
 package me.kcaldwell.hackernewsreader.adapters;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.data.FeedItem;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment;
-import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleCommentsSelectedListener;
+import me.kcaldwell.hackernewsreader.ui.ArticleListFragment.OnArticleSelectedListener;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link FeedItem} and makes a call to the
@@ -45,15 +45,13 @@ public class ArticleRecyclerViewAdapter extends RealmRecyclerViewAdapter<FeedIte
         holder.mTitleTextView.setText(item.getTitle());
         if (item.getDomain() == null || item.getDomain().equals("null")) {
             holder.mDomainTextView.setText("");
-        }
-        else {
+        } else {
             holder.mDomainTextView.setText(item.getDomain());
         }
         holder.mAuthorTextView.setText(item.getAuthor());
         if (item.getPoints() == null || item.getPoints().equals("null")) {
             holder.mPointsTextView.setText("");
-        }
-        else {
+        } else {
             holder.mPointsTextView.setText("+" + item.getPoints());
         }
         holder.mCommentCount.setText(String.valueOf(item.getCommentsCount()));
