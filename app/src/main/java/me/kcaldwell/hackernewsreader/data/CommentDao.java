@@ -36,6 +36,9 @@ public class CommentDao {
                 if (jsonObject.has("level")) {
                     comment.setLevel(jsonObject.getInt("level"));
                 }
+                else {
+                    comment.setLevel(0);
+                }
                 realmInstance.copyToRealmOrUpdate(comment);
 
                 if (parentId != null) {
