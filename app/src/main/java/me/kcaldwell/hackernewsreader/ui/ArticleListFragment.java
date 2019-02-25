@@ -168,7 +168,7 @@ public class ArticleListFragment extends Fragment {
 
         News.get(getActivity(), mPage, response -> {
             FeedItemDao.createOrUpdateFeedItemsFromArray(response, mRealm);
-            refreshAdapterArticles();
+            refreshAdapterArticles(response.length());
             scrollToPositionIfSet();
             toggleProgressViews(false);
         }, () -> {
@@ -198,9 +198,9 @@ public class ArticleListFragment extends Fragment {
         }
     }
 
-    private void refreshAdapterArticles() {
+    private void refreshAdapterArticles(int numNewArticles) {
         if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemRangeInserted(mAdapter.getItemCount(), numNewArticles);
         }
     }
 
