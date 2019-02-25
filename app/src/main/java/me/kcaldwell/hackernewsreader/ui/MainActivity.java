@@ -2,6 +2,7 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         transaction.commit();
     }
 
-    private void navigateToArticleFragment(String title, String url) {
+    private void navigateToArticleFragment(String title, String url, String type) {
         if (title != null) {
             mTitleTextView.setText(title);
         } else {
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         Fragment fragment = new WebviewFragment();
 
         Bundle bundle = new Bundle();
+        bundle.putString("type", type);
         bundle.putString("url", url);
         fragment.setArguments(bundle);
 
@@ -132,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
 
     @Override
     public void onArticleSelected(FeedItem item) {
-        navigateToArticleFragment(item.getTitle(), item.getUrl());
+        Log.i(TAG, item.toString());
+        navigateToArticleFragment(item.getTitle(), item.getUrl(), item.getType());
     }
 
     @Override
@@ -153,6 +156,6 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
 
     @Override
     public void onCommentUrlClicked(String url) {
-        navigateToArticleFragment(null, url);
+        navigateToArticleFragment(null, url, null);
     }
 }

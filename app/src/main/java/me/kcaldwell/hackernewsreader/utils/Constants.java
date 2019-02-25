@@ -4,6 +4,7 @@ public class Constants {
 
     // URLs
     public static final String BASE_URL = "https://api.hnpwa.com/v0/";
+    public static final String EXTERNAL_BASE_URL = "https://news.ycombinator.com/";
 
     // Feeds
     public static final String URL_NEWS = BASE_URL + "news/";

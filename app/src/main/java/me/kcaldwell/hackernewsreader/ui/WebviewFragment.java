@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
 import me.kcaldwell.hackernewsreader.R;
+import me.kcaldwell.hackernewsreader.utils.Constants;
 import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
 
 
@@ -25,8 +26,10 @@ import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
  * to handle interaction events.
  */
 public class WebviewFragment extends Fragment {
+    private static final String ARG_TYPE = "type";
     private static final String ARG_URL = "url";
 
+    private String mType;
     private String mURL;
 
     private OnArticleBookmarkListener mListener;
@@ -42,7 +45,10 @@ public class WebviewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mType = getArguments().getString(ARG_TYPE);
             mURL = getArguments().getString(ARG_URL);
+
+            if (mType.equals("ask")) mURL = Constants.EXTERNAL_BASE_URL + mURL;
         }
     }
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="@color/color_primary_dark">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:padding="12dp"
                 app:layout_collapseMode="parallax">
 
                 <TextView
@@ -50,9 +50,9 @@
                     android:id="@+id/author_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
                     android:fontFamily="@font/merriweather_sans"
-                    android:textColor="#80FAFAFA"
+                    android:textColor="@color/color_accent_secondary"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/url_text_view" />
@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/merriweather_sans"
-                    android:textColor="#80FAFAFA"
+                    android:textColor="@color/color_accent_secondary"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/author_text_view" />
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/merriweather_sans"
-                    android:textColor="#80FAFAFA"
+                    android:textColor="@color/color_accent_secondary"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
@@ -90,9 +90,6 @@
         android:name="me.kcaldwell.hackernewsreader.ui.CommentFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:fadingEdge="horizontal"
         android:fadingEdgeLength="6dp"
         android:fillViewport="false"

@@ -39,7 +39,7 @@ public class CommentListFragment extends Fragment {
     private Realm mRealm;
     private String mArticleId;
     private RealmResults<Comment> mComments;
-    private Parcelable mRecyclerViewState;
+    private Parcelable mCommentRecyclerViewState;
 
     private TextView mTitleTextView;
     private TextView mUrlTextView;
@@ -115,7 +115,7 @@ public class CommentListFragment extends Fragment {
         super.onPause();
 
         // Save the state of the recycler view so the scroll position can be preserved
-        mRecyclerViewState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        mCommentRecyclerViewState = mRecyclerView.getLayoutManager().onSaveInstanceState();
     }
 
     @Override
@@ -154,15 +154,19 @@ public class CommentListFragment extends Fragment {
 
     private void refreshAdapterArticles() {
         // Set the adapter
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
-        mRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(layoutManager);
+            mAdapter = new CommentRecyclerViewAdapter(mComments, mListener);
+            mRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private void scrollToPositionIfSet() {
-        if (mRecyclerViewState != null) {
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(mRecyclerViewState);
+        if (mCommentRecyclerViewState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mCommentRecyclerViewState);
         } else {
             Log.i(TAG, "State was null");
         }

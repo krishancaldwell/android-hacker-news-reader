@@ -68,7 +68,7 @@ public class ArticleListFragment extends Fragment {
         mRealm = Realm.getDefaultInstance();
 
         // Remove old data from local DB
-        FeedItemDao.removeStaleFeedItems(mRealm);
+        FeedItemDao.deleteAllFeedItems(mRealm);
 
         // Fetch current data
         getArticles();
@@ -191,6 +191,7 @@ public class ArticleListFragment extends Fragment {
             int visible = show ? View.VISIBLE : View.GONE;
             mLoadingView.setVisibility(visible);
             mAnimationView.setVisibility(visible);
+            mLoadingListener.onArticlesLoading(show);
         }
         else {
             mLoadingListener.onArticlesLoading(show);
