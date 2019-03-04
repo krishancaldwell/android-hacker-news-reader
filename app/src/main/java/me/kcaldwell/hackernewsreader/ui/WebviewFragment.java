@@ -32,7 +32,6 @@ import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
  * to handle interaction events.
  */
 public class WebviewFragment extends Fragment {
-    private static final String TAG = WebviewFragment.class.getSimpleName();
     private static final String ARG_TITLE = "title";
     private static final String ARG_TYPE = "type";
     private static final String ARG_URL = "url";
@@ -70,7 +69,6 @@ public class WebviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_article, container, false);
-        Log.i(TAG, "Type is: " + mType);
         if (mType.equals("link")) setHasOptionsMenu(true);
 
         mProgressBar = rootView.findViewById(R.id.progress_bar);

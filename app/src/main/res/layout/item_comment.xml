@@ -21,15 +21,28 @@
             android:orientation="horizontal"
             android:padding="12dp">
 
+            <ImageView
+                android:id="@+id/level_up_icon"
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_level_up"
+                android:contentDescription="Level up arrow"
+                android:visibility="gone"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
             <TextView
                 android:id="@+id/author_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
                 android:fontFamily="@font/merriweather_sans"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="#868686"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/level_up_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

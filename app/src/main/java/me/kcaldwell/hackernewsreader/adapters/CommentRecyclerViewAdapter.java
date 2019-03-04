@@ -6,6 +6,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,6 +44,12 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
         final Comment comment = getItem(position);
         holder.mComment = comment;
         indentView(holder.mView, comment.getLevel());
+        if (comment.getLevel() > 0) {
+            holder.mLevelUpIcon.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.mLevelUpIcon.setVisibility(View.GONE);
+        }
 
         holder.mAuthorTextView.setText(comment.getAuthor());
         holder.mContentView.setText(Html.fromHtml(comment.getContent()));
@@ -87,6 +94,7 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
+        final ImageView mLevelUpIcon;
         final TextView mAuthorTextView;
         final TextView mContentView;
         final TextView mTimeTextView;
@@ -97,6 +105,7 @@ public class CommentRecyclerViewAdapter extends RealmRecyclerViewAdapter<Comment
         ViewHolder(View view) {
             super(view);
             mView = view;
+            mLevelUpIcon = view.findViewById(R.id.level_up_icon);
             mAuthorTextView = view.findViewById(R.id.author_text_view);
             mContentView = view.findViewById(R.id.content_text_view);
             mTimeTextView = view.findViewById(R.id.time_text_view);
