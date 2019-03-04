@@ -2,6 +2,8 @@ package me.kcaldwell.hackernewsreader.api;
 
 import android.content.Context;
 
+import org.json.JSONObject;
+
 import me.kcaldwell.hackernewsreader.utils.Constants;
 
 
@@ -20,9 +22,13 @@ public class Item {
 
         String url = Constants.URL_ITEM + id + Constants.URL_END;
 
-        API.getObject(context, url, LOG,
+        API.getObject(
+                context,
+                url,
+                LOG,
                 response -> responseCallback.onResponse(response),
-                () -> errorCallback.onError());
+                () -> errorCallback.onError()
+        );
     }
 
 }
