@@ -2,10 +2,15 @@ package me.kcaldwell.hackernewsreader.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
@@ -13,6 +18,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import me.kcaldwell.hackernewsreader.R;
 import me.kcaldwell.hackernewsreader.utils.Constants;
@@ -26,9 +32,12 @@ import me.kcaldwell.hackernewsreader.utils.HNWebviewClient;
  * to handle interaction events.
  */
 public class WebviewFragment extends Fragment {
+    private static final String TAG = WebviewFragment.class.getSimpleName();
+    private static final String ARG_TITLE = "title";
     private static final String ARG_TYPE = "type";
     private static final String ARG_URL = "url";
 
+    private String mTitle;
     private String mType;
     private String mURL;
 
@@ -47,6 +56,9 @@ public class WebviewFragment extends Fragment {
         if (getArguments() != null) {
             mType = getArguments().getString(ARG_TYPE);
             mURL = getArguments().getString(ARG_URL);
+            if (getArguments().getString(ARG_TITLE) != null) {
+                mTitle = getArguments().getString(ARG_TITLE);
+            }
 
             if (mType.equals("ask")) mURL = Constants.EXTERNAL_BASE_URL + mURL;
         }
@@ -58,6 +70,8 @@ public class WebviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_article, container, false);
+        Log.i(TAG, "Type is: " + mType);
+        if (mType.equals("link")) setHasOptionsMenu(true);
 
         mProgressBar = rootView.findViewById(R.id.progress_bar);
         mWebview = rootView.findViewById(R.id.webview);
@@ -132,6 +146,28 @@ public class WebviewFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_article, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = mTitle + " - " + mURL;
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnArticleSelected
         Bundle bundle = new Bundle();
         bundle.putString("type", type);
         bundle.putString("url", url);
+        bundle.putString("title", title);
         fragment.setArguments(bundle);
 
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
